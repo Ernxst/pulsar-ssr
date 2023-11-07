@@ -23,7 +23,7 @@ export interface CookieHandler {
 }
 
 export interface LoaderArgs<
-	TPath extends UrlPath = UrlPath,
+	TPath extends UrlPath = any,
 	TQuery extends QueryParams = QueryParams,
 > {
 	/**

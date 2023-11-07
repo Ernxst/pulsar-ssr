@@ -2,7 +2,7 @@ import type { LoaderArgs } from 'src/loader/types';
 import type { QueryParams, UrlPath } from 'src/types';
 
 export interface RouteArgs<
-	TPath extends UrlPath = UrlPath,
+	TPath extends UrlPath = any,
 	TQuery extends QueryParams = QueryParams,
 	TBody = unknown,
 > extends LoaderArgs<TPath, TQuery> {

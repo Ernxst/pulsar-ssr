@@ -1,6 +1,6 @@
 import type { Context } from 'elysia';
 import { cacheHeader } from 'pretty-cache-header';
-import type { CookieHandler, LoaderArgs, Runtime } from 'src/loader/types';
+import type { CookieHandler, Runtime } from 'src/loader/types';
 import type { RouteArgs } from 'src/route/types';
 import type { QueryParams, UrlPath } from 'src/types';
 import { getRuntime } from './get-runtime';
@@ -43,7 +43,7 @@ export function createRouteContext<
 			return request;
 		},
 
-		get response(): LoaderArgs<any, any>['response'] {
+		get response(): RouteArgs<TPath, TQuery, TBody>['response'] {
 			const status = set.status;
 			const resStatus = typeof status === 'number' ? status : 200;
 			const headers = new Headers(set.headers);

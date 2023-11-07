@@ -1,0 +1,139 @@
+{
+	"name": "pulsar",
+	"type": "module",
+	"version": "0.0.1",
+	"description": "A lightweight SSR JSX meta-framework built on Elysia",
+	"author": "Ernest Nkansah-Badu <ernestjbadu@loader.com>",
+	"license": "MIT",
+	"homepage": "https://pulsarjs.dev",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/Ernxst/pulsar.git",
+		"directory": "."
+	},
+	"bugs": {
+		"url": "https://github.com/Ernxst/pulsar/issues"
+	},
+	"keywords": [
+		"typescript"
+	],
+	"sideEffects": false,
+	"publishConfig": {
+		"access": "public"
+	},
+	"exports": {
+		".": {
+			"import": {
+				"types": "./dist/index.d.ts",
+				"default": "./dist/index.js"
+			},
+			"require": {
+				"types": "./dist/index.d.cts",
+				"default": "./dist/index.cjs"
+			}
+		},
+		"./components": {
+			"import": {
+				"types": "./dist/components/index.d.ts",
+				"default": "./dist/components/index.js"
+			},
+			"require": {
+				"types": "./dist/components/index.d.cts",
+				"default": "./dist/components/index.cjs"
+			}
+		},
+		"./loader": {
+			"import": {
+				"types": "./dist/loader/index.d.ts",
+				"default": "./dist/loader/index.js"
+			},
+			"require": {
+				"types": "./dist/loader/index.d.cts",
+				"default": "./dist/loader/index.cjs"
+			}
+		},
+		"./internal": {
+			"import": {
+				"types": "./dist/internal/index.d.ts",
+				"default": "./dist/internal/index.js"
+			},
+			"require": {
+				"types": "./dist/internal/index.d.cts",
+				"default": "./dist/internal/index.cjs"
+			}
+		},
+		"./route": {
+			"import": {
+				"types": "./dist/route/index.d.ts",
+				"default": "./dist/route/index.js"
+			},
+			"require": {
+				"types": "./dist/route/index.d.cts",
+				"default": "./dist/route/index.cjs"
+			}
+		}
+	},
+	"main": "./dist/index.cjs",
+	"module": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"typesVersions": {
+		"*": {
+			".": [
+				"./dist/index.d.ts",
+				"./dist/index.d.cts"
+			],
+			"components": [
+				"./dist/components/index.d.ts",
+				"./dist/components/index.d.cts"
+			],
+			"internal": [
+				"./dist/internal/index.d.ts",
+				"./dist/internal/index.d.cts"
+			],
+			"loader": [
+				"./dist/loader/index.d.ts",
+				"./dist/loader/index.d.cts"
+			],
+			"route": [
+				"./dist/route/index.d.ts",
+				"./dist/route/index.d.cts"
+			]
+		}
+	},
+	"files": [
+		"dist",
+		"README.md"
+	],
+	"engines": {
+		"node": ">=v18.0.0"
+	},
+	"scripts": {
+		"------------------------------------------------------------------------------": "",
+		"build": "tsup",
+		"postbuild": "publint",
+		"-------------------------------------------------------------------------------": "",
+		"typecheck": "tsc --noEmit",
+		"--------------------------------------------------------------------------------": "",
+		"test": "bun test"
+	},
+	"peerDependencies": {
+		"typescript": "^5.1.0",
+		"vite": "^4.4.9"
+	},
+	"peerDependenciesMeta": {
+		"typescript": {
+			"optional": true
+		},
+		"vite": {
+			"optional": false
+		}
+	},
+	"dependencies": {
+		"vite": "^4.4.9"
+	},
+	"devDependencies": {
+		"@elysiajs/html": "0.7.3",
+		"elysia": "0.7.21",
+		"pretty-cache-header": "1.0.0"
+	}
+}

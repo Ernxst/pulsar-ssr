@@ -1,0 +1,98 @@
+import type { Context } from 'elysia';
+import type { QueryParams, UrlPath } from 'src/types';
+import type { RouteContext } from 'src/route/types';
+import { cacheHeader } from 'pretty-cache-header';
+import type { CookieHandler, Runtime } from 'src/loader/types';
+
+export function createRouteContext<
+	TPath extends UrlPath,
+	TQuery extends QueryParams,
+	TBody,
+>({
+	set,
+	request,
+	path,
+	query,
+	params,
+	body,
+	cookie,
+}: Context): RouteContext<TPath, TQuery, TBody> {
+	return {
+		get path() {
+			return path as TPath;
+		},
+
+		get query() {
+			return query as TQuery;
+		},
+
+		get params() {
+			return params;
+		},
+
+		get body() {
+			return body as TBody;
+		},
+
+		get runtime(): Runtime {
+			return 'workerd';
+		},
+
+		get request() {
+			return request;
+		},
+
+		get response() {
+			// TODO: Allow modifying response headers
+			const status = set.status ?? 200;
+			const resStatus = typeof status === 'number' ? status : undefined;
+			return new Response(null, { status: resStatus, headers: set.headers });
+		},
+
+		get cookies(): CookieHandler {
+			return {
+				set: (name, value, options) => cookie[name].set({ ...options, value }),
+				get: (name) => cookie[name]?.value,
+				delete: (name) => cookie[name]?.remove(),
+			};
+		},
+
+		redirect(url, status = 302) {
+			set.redirect = url.toString();
+			set.status = status;
+		},
+
+		cache(options) {
+			const headers = cacheHeader(options);
+			set.headers['Cache-Control'] = headers;
+		},
+
+		status(status) {
+			set.status = status;
+		},
+
+		json(body = {} as any, status = 200 as any) {
+			set.status = status;
+			set.headers['Content-Type'] = 'application/json';
+			return body;
+		},
+
+		text(body, status = 200 as any) {
+			set.status = status;
+			set.headers['Content-Type'] = 'text/plain';
+			return body;
+		},
+
+		html(body, status = 200 as any) {
+			set.status = status;
+			set.headers['Content-Type'] = 'text/html';
+			return body;
+		},
+
+		xml(body, status = 200 as any) {
+			set.status = status;
+			set.headers['Content-Type'] = 'text/xml';
+			return body;
+		},
+	};
+}

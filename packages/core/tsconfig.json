@@ -1,0 +1,14 @@
+{
+	"extends": ["../../tsconfig.base.json"],
+	"compilerOptions": {
+		"baseUrl": ".",
+		"outDir": "./dist"
+	},
+	"include": [
+		"src",
+		"../vite/src/transform",
+		"../vite/src/index.ts",
+		"../vite/src/constants.ts"
+	],
+	"exclude": ["dist", "node_modules", "**/*.spec.ts"]
+}

@@ -1,8 +1,9 @@
 import type { Context } from 'elysia';
-import type { QueryParams, UrlPath } from 'src/types';
-import type { RouteContext } from 'src/route/types';
 import { cacheHeader } from 'pretty-cache-header';
 import type { CookieHandler, Runtime } from 'src/loader/types';
+import type { RouteArgs } from 'src/route/types';
+import type { QueryParams, UrlPath } from 'src/types';
+import { getRuntime } from './get-runtime';
 
 export function createRouteContext<
 	TPath extends UrlPath,
@@ -16,7 +17,7 @@ export function createRouteContext<
 	params,
 	body,
 	cookie,
-}: Context): RouteContext<TPath, TQuery, TBody> {
+}: Context): RouteArgs<TPath, TQuery, TBody> {
 	return {
 		get path() {
 			return path as TPath;
@@ -35,7 +36,7 @@ export function createRouteContext<
 		},
 
 		get runtime(): Runtime {
-			return 'workerd';
+			return getRuntime();
 		},
 
 		get request() {
@@ -43,7 +44,7 @@ export function createRouteContext<
 		},
 
 		get response() {
-			// TODO: Allow modifying response headers
+			// TODO: Fix this: modifying response headers doesn't work
 			const status = set.status ?? 200;
 			const resStatus = typeof status === 'number' ? status : undefined;
 			return new Response(null, { status: resStatus, headers: set.headers });

@@ -117,22 +117,14 @@
 		"test": "bun test"
 	},
 	"peerDependencies": {
-		"typescript": "^5.1.0",
-		"vite": "^4.4.9"
+		"typescript": "^5.1.0"
 	},
 	"peerDependenciesMeta": {
 		"typescript": {
 			"optional": true
-		},
-		"vite": {
-			"optional": false
 		}
 	},
-	"dependencies": {
-		"vite": "^4.4.9"
-	},
 	"devDependencies": {
-		"@elysiajs/html": "0.7.3",
 		"elysia": "0.7.21",
 		"pretty-cache-header": "1.0.0"
 	}

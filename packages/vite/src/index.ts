@@ -1,15 +1,14 @@
 import path from 'node:path';
+import MagicString from 'magic-string';
+import { createRouter } from 'src/server/create-router';
+import { createRequest, setResponse } from 'src/server/http';
+import { getRoutes } from 'src/utils/get-routes';
 import type { Plugin } from 'vite';
-import glob from 'tiny-glob';
-import { useCache } from 'src/cache';
-import { createServerEntry } from 'src/create-server-entry';
-import { getOutputFilename } from 'src/utils/slug';
+import { matches } from './utils/matches';
+
+// TODO: Error boundaries and (nested) layouts
 
 export interface PulsarOptions {
-	/**
-	 * @default src/root.tsx
-	 */
-	entry?: string;
 	/**
 	 * The directory where your routes/pages are located
 	 *
@@ -19,79 +18,78 @@ export interface PulsarOptions {
 }
 
 export default function pulsar(options: PulsarOptions = {}): Plugin[] {
-	const {
-		// entry = path.join(process.cwd(), 'src/root.tsx'),
-		routes = path.join(process.cwd(), 'src', 'routes'),
-	} = options;
-
-	const { createEntry, cache, globPatterns } = useCache({ routes });
-
-	/** Output files relative to the <OUTPUT_DIR>/server/ directory */
-	const routeFiles = new Set<string>();
+	const { routes = path.join(process.cwd(), 'src', 'routes') } = options;
 
 	return [
 		{
 			name: 'pulsar-config',
+			enforce: 'pre',
 			async config() {
-				const entries = await Promise.all(globPatterns.map((p) => glob(p)));
+				const files = await getRoutes(routes);
 				return {
 					build: {
-						// TODO: For some reason, this bundles the input files again
-						lib: { formats: ['es'], entry: entries.flat() },
+						lib: { formats: ['es'], entry: files },
 					},
 				};
 			},
 		},
-		/**
-		 * Plugin to split consumer code into server and client bundles
-		 */
 		{
-			name: 'pulsar-bundle',
-			transform(code, id, options) {
-				return createEntry({ code, id, ...options });
-			},
-		},
-		/**
-		 * Plugin to write the bundles to the filesystem
-		 */
-		{
-			name: 'pulsar-write-files',
-			enforce: 'post',
-			buildEnd() {
-				cache.forEach((result, filePath) => {
-					for (const [type, source] of Object.entries(result)) {
-						if (source) {
-							const file = getOutputFilename(
-								filePath.split(routes)[1],
-								type as any
-							);
+			name: 'pulsar-vite',
+			transform(code, id) {
+				/**
+				 * Bind the usage of useLoaderData to the outer scope.
+				 * This way, we can set the loader data on the outer scope,
+				 * which we have access to, and then access it inside
+				 * the definition of useLoaderData and then return it
+				 *
+				 * This means useLoaderData() will only ever return the
+				 * loader data from the loader defined in the same file
+				 * as the module
+				 *
+				 * We perform this replacement so the consumer doesn't
+				 * have to bind it themselves.
+				 */
+				if (matches(id, routes)) {
+					// Use magic string so our transformations don't break the source map
+					const string = new MagicString(code);
+					const pattern = /useLoaderData([.*?])?\(\)/g;
 
-							const directory = type === 'client' ? 'client' : 'server';
-							const fileName = path.join(directory, file);
-
-							if (type === 'server') {
-								// Relative to the <OUTPUT_DIR>/server/
-								routeFiles.add(`.${file}`);
-							}
-
-							// TODO: This doesn't bundle files - need that, maybe write to virtual files first then add entries?
-							this.emitFile({ type: 'asset', fileName, source });
-						}
+					let match = pattern.exec(code);
+					while (match) {
+						const [fullMatch, typeParam] = match;
+						const start = match.index;
+						const end = start + fullMatch.length;
+						const replacement = `useLoaderData${typeParam ?? ''}.bind(this)()`;
+						string.overwrite(start, end, replacement);
+						match = pattern.exec(code);
 					}
-				});
-			},
-		},
-		{
-			name: 'pulsar-create-server-entry',
-			enforce: 'post',
-			buildEnd() {
-				const entry = createServerEntry({ routes: [...routeFiles.values()] });
 
-				this.emitFile({
-					type: 'asset',
-					fileName: path.join('server', 'entry.mjs'),
-					source: entry,
-				});
+					return { code: string.toString(), map: string.generateMap() };
+				}
+			},
+			async configureServer(server) {
+				const router = await createRouter(server, routes);
+
+				return () => {
+					server.middlewares.use(async (req, res, next) => {
+						try {
+							// This is null outside of this scope
+							const base = server.resolvedUrls?.local[0];
+							if (!base) throw new Error('Could not get base url');
+
+							const { origin } = new URL(base);
+							// For some reason, req.url is not correct, so we fix it before
+							// creating the request
+							req.url = req.originalUrl;
+							const request = await createRequest(origin, req);
+							const response = await router.handle(request);
+							await setResponse(res, response);
+						} catch (error) {
+							server.ssrFixStacktrace(error as Error);
+							next(error);
+						}
+					});
+				};
 			},
 		},
 	];

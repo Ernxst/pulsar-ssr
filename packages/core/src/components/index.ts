@@ -1,1 +1,1 @@
-export { Outlet } from 'src/components/Outlet';
+export {};

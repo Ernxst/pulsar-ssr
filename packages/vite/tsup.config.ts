@@ -6,9 +6,9 @@ export default defineConfig({
 	},
 	format: ['cjs', 'esm'],
 	dts: true,
-	sourcemap: true,
 	clean: true,
 	splitting: false,
+	external: ['pulsar', 'vite'],
 	banner: {
 		js: `
 // BANNER START

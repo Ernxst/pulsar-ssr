@@ -4,11 +4,6 @@
 		"baseUrl": ".",
 		"outDir": "./dist"
 	},
-	"include": [
-		"src",
-		"../vite/src/transform",
-		"../vite/src/index.ts",
-		"../vite/src/constants.ts"
-	],
+	"include": ["src"],
 	"exclude": ["dist", "node_modules", "**/*.spec.ts"]
 }

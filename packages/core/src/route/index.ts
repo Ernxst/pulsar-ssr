@@ -1,1 +1,1 @@
-export type { Route, RouteContext, inferRouteOutput } from './types';
+export type { Route, RouteArgs, inferRouteOutput } from './types';

@@ -1,6 +1,7 @@
 import { type LoaderArgs, useLoaderData } from 'pulsar/loader';
 import type { RouteArgs } from 'pulsar/route';
 import globalCssHref from '../global.css?url';
+import Button from '../components/Button';
 
 export function POST({ request, response, runtime, cache, json }: RouteArgs) {
 	cache({ maxAge: '2h' });
@@ -27,6 +28,7 @@ export default function Page() {
 	const { users, runtime } = useLoaderData<typeof loader>();
 	console.log('I am run on the server!');
 
+	// TODO: Fix these typescript errors
 	return (
 		<>
 			<html>
@@ -36,6 +38,8 @@ export default function Page() {
 				<body>
 					<h1>Hello World</h1>
 					<p>Served on {runtime}</p>
+					<Button>Click me</Button>
+
 					<ul>
 						{users.map((user) => (
 							<li key={user.id}>{user.name}</li>

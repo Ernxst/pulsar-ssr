@@ -42,7 +42,7 @@ export async function handleError(
 	routesDir: string
 ) {
 	if (ctx.code === 'NOT_FOUND') {
-		return await handle404(ctx, vite, routesDir)
+		return await handle404(ctx, vite, routesDir);
 	}
 
 	if (ctx.code === 'VALIDATION') {
@@ -72,7 +72,7 @@ async function handle404(
 
 		const response = await handlePage(ctx, module.default, module.loader);
 		ctx.set.headers['Content-Type'] = 'text/html;charset=utf-8';
-		return response
+		return response;
 	} catch {
 		throw ctx.error;
 	}

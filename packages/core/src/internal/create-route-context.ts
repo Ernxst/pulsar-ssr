@@ -1,6 +1,6 @@
 import type { Context } from 'elysia';
 import { cacheHeader } from 'pretty-cache-header';
-import type { CookieHandler, Runtime } from 'src/loader/types';
+import type { CookieHandler, LoaderArgs, Runtime } from 'src/loader/types';
 import type { RouteArgs } from 'src/route/types';
 import type { QueryParams, UrlPath } from 'src/types';
 import { getRuntime } from './get-runtime';
@@ -43,11 +43,24 @@ export function createRouteContext<
 			return request;
 		},
 
-		get response() {
-			// TODO: Fix this: modifying response headers doesn't work
-			const status = set.status ?? 200;
-			const resStatus = typeof status === 'number' ? status : undefined;
-			return new Response(null, { status: resStatus, headers: set.headers });
+		get response(): LoaderArgs<any, any>['response'] {
+			const status = set.status;
+			const resStatus = typeof status === 'number' ? status : 200;
+			const headers = new Headers(set.headers);
+
+			headers.set = (name, value) => {
+				set.headers[name] = value;
+			};
+
+			headers.append = (name, value) => {
+				if (set.headers[name]) {
+					set.headers[name] += value;
+				} else {
+					headers.set(name, value);
+				}
+			};
+
+			return { status: resStatus, headers };
 		},
 
 		get cookies(): CookieHandler {

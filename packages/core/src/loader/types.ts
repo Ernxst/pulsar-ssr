@@ -34,7 +34,7 @@ export interface LoaderArgs<
 	 * The original, unmodified {@linkcode Request} object.
 	 */
 	readonly request: Request;
-	readonly response: Pick<Response, 'headers' | 'status' | 'statusText'>;
+	readonly response: Pick<Response, 'headers' | 'status'>;
 	/**
 	 * The (relative) path of the request. This is not the same as the request
 	 * endpoint (i.e., {@linkcode URL.pathname}). This is the path that was

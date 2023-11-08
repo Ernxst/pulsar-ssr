@@ -24,7 +24,8 @@ export default function App() {
 				<div id="sidebar">
 					<h1>Remix Contacts</h1>
 					<nav>
-						{contacts.length ? (
+						{contacts.length
+? (
 							<ul>
 								{contacts.map((contact) => (
 									<li key={contact.id}>
@@ -34,11 +35,13 @@ export default function App() {
 											}
 											href={`/contacts/${contact.id}`}
 										>
-											{contact.first || contact.last ? (
+											{contact.first || contact.last
+? (
 												<>
 													{contact.first} {contact.last}
 												</>
-											) : (
+											)
+: (
 												<i>No Name</i>
 											)}{' '}
 											{contact.favorite ? <span>★</span> : null}
@@ -46,7 +49,8 @@ export default function App() {
 									</li>
 								))}
 							</ul>
-						) : (
+						)
+: (
 							<p>
 								<i>No contacts</i>
 							</p>

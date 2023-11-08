@@ -27,22 +27,26 @@ export default function Contact() {
 
 			<div>
 				<h1>
-					{contact.first || contact.last ? (
+					{contact.first || contact.last
+? (
 						<>
 							{contact.first} {contact.last}
 						</>
-					) : (
+					)
+: (
 						<i>No Name</i>
 					)}
 				</h1>
 
-				{contact.twitter ? (
+				{contact.twitter
+? (
 					<p>
 						<a href={`https://twitter.com/${contact.twitter}`}>
 							{contact.twitter}
 						</a>
 					</p>
-				) : null}
+				)
+: null}
 
 				{contact.notes ? <p>{contact.notes}</p> : null}
 			</div>

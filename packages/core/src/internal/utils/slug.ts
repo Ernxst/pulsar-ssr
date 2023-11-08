@@ -1,4 +1,4 @@
-import path, { win32 } from 'node:path';
+import path from 'node:path';
 
 /**
  * Convert a file URL into an API endpoint
@@ -8,90 +8,63 @@ export function fileToPathname(filePath: string): string {
 		.replace('.page', '')
 		.replace('.server', '')
 		.replace(path.extname(filePath), '')
-		.replace(/\[(.*?)\]/g, (match, placeholder) => `:${placeholder}`);
 
-	const slug = buildReactRemixRoutePath(filePath) ?? '';
-	return `/${slug}`.replace(/\/index$/, '/').replaceAll('//', '/');
+	return transformPathToUrl(filePath);
 }
 
-const replaceIndexRE = /\/?index$/;
+// https://github.com/wobsoriano/elysia-autoroutes/blob/0d35c8140cd088dfe8908994162fa77926883dd9/src/utils/transformPathToUrl.ts
+export function transformPathToUrl(filePath: string): string {
+	const url = `/${filePath}`; // Add leading slash to the URL
 
-// From vite-plugin-pages
-export function buildReactRemixRoutePath(node: string): string | undefined {
-	const escapeStart = '[';
-	const escapeEnd = ']';
-	let result = '';
-	let rawSegmentBuffer = '';
+	if (url.length === 1) return url; // If the URL is just "/", return it as is
 
-	let inEscapeSequence = 0;
-	let skipSegment = false;
-	for (let i = 0; i < node.length; i++) {
-		const char = node.charAt(i);
-		const lastChar = i > 0 ? node.charAt(i - 1) : undefined;
-		const nextChar = i < node.length - 1 ? node.charAt(i + 1) : undefined;
+	const resultUrl = url
+		.split(path.sep)
+		.map((part) => handleParameters(part))
+		.join('/'); // Map and join the URL parts using handleParameters function
 
-		function isNewEscapeSequence() {
-			return (
-				!inEscapeSequence && char === escapeStart && lastChar !== escapeStart
-			);
-		}
+	// Remove 'index' from the end of the URL if it exists
+	let finalUrl = resultUrl.endsWith('index')
+		? resultUrl.replace(/\/?index$/, '')
+		: resultUrl;
 
-		function isCloseEscapeSequence() {
-			return inEscapeSequence && char === escapeEnd && nextChar !== escapeEnd;
-		}
+	// Remove the trailing slash from the URL if it exists
+	finalUrl = finalUrl.replace(/\/$/, '');
 
-		function isStartOfLayoutSegment() {
-			return char === '_' && nextChar === '_' && !rawSegmentBuffer;
-		}
+	// If the URL is empty, replace it with the root path "/"
+	if (finalUrl.length === 0) return '/';
 
-		if (skipSegment) {
-			if (char === '/' || char === '.' || char === win32.sep)
-				skipSegment = false;
+	// Replace multiple slashes with a single slash
+	return finalUrl.replace(/\/{2,}/g, '/');
+}
 
-			continue;
-		}
+// https://github.com/wobsoriano/elysia-autoroutes/blob/0d35c8140cd088dfe8908994162fa77926883dd9/src/utils/handleParameters.ts
+function handleParameters(token: string) {
+	const replacements = [
+		// Clean the url extensions
+		{ regex: /\.(ts|js|mjs|cjs|jsx|tsx)$/u, replacement: '' },
 
-		if (isNewEscapeSequence()) {
-			inEscapeSequence++;
-			continue;
-		}
+		// Handle wild card based routes - users/[...id]/profile.ts -> users/*/profile
+		{ regex: /\[\.\.\..+\]/gu, replacement: '*' },
 
-		if (isCloseEscapeSequence()) {
-			inEscapeSequence--;
-			continue;
-		}
+		// Handle generic square bracket based routes - users/[id]/index.ts -> users/:id
+		{
+			regex: /\[(.*?)\]/gu,
+			replacement: (_subString: string, match: string) => `:${match}`,
+		},
 
-		if (inEscapeSequence) {
-			result += char;
-			continue;
-		}
+		// Handle the case when multiple parameters are present in one file
+		// users / [id] - [name].ts to users /: id -:name and users / [id] - [name] / [age].ts to users /: id -: name /: age
+		{ regex: /\]-\[/gu, replacement: '-:' },
+		{ regex: /\]\//gu, replacement: '/' },
+		{ regex: /\[/gu, replacement: '' },
+		{ regex: /\]/gu, replacement: '' },
+	];
 
-		if (char === '/' || char === win32.sep || char === '.') {
-			if (rawSegmentBuffer === 'index' && result.endsWith('index'))
-				result = result.replace(replaceIndexRE, '');
-			else result += '/';
+	let url = token;
 
-			rawSegmentBuffer = '';
-			continue;
-		}
+	for (const { regex, replacement } of replacements)
+		url = url.replace(regex, replacement as any);
 
-		if (isStartOfLayoutSegment()) {
-			skipSegment = true;
-			continue;
-		}
-
-		rawSegmentBuffer += char;
-
-		if (char === '$') {
-			result += typeof nextChar === 'undefined' ? '*' : ':';
-			continue;
-		}
-
-		result += char;
-	}
-
-	if (rawSegmentBuffer === 'index' && result.endsWith('index'))
-		result = result.replace(replaceIndexRE, '');
-
-	return result || undefined;
+	return url;
 }

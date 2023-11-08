@@ -1,5 +1,5 @@
 import path from 'node:path';
-import { fileToPathname } from 'src/internal/utils/slug';
+import { fileToPathname } from 'src/internal/utils/file-to-pathname';
 import glob from 'tiny-glob';
 import { PATTERN } from './matches';
 

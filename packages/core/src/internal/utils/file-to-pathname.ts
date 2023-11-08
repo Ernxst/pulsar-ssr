@@ -1,5 +1,7 @@
 import path from 'node:path';
 
+// TODO: Support optional routes
+// TODO: Support flat routes i.e., users.[id].destroy
 /**
  * Convert a file URL into an API endpoint
  */
@@ -7,7 +9,6 @@ export function fileToPathname(filePath: string): string {
 	filePath = filePath
 		.replace('.page', '')
 		.replace('.server', '')
-		.replace(path.extname(filePath), '')
 
 	return transformPathToUrl(filePath);
 }
@@ -39,10 +40,10 @@ export function transformPathToUrl(filePath: string): string {
 }
 
 // https://github.com/wobsoriano/elysia-autoroutes/blob/0d35c8140cd088dfe8908994162fa77926883dd9/src/utils/handleParameters.ts
-function handleParameters(token: string) {
+export function handleParameters(token: string) {
 	const replacements = [
 		// Clean the url extensions
-		{ regex: /\.(ts|js|mjs|cjs|jsx|tsx)$/u, replacement: '' },
+		{ regex: /\.(ts|js|mjs|mts|cjs|cts|jsx|tsx)$/u, replacement: '' },
 
 		// Handle wild card based routes - users/[...id]/profile.ts -> users/*/profile
 		{ regex: /\[\.\.\..+\]/gu, replacement: '*' },

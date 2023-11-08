@@ -1,7 +1,6 @@
 import path from 'node:path';
 
-// TODO: Support optional routes
-// TODO: Support flat routes i.e., users.[id].destroy
+// TODO: Support optional routes (when elysia supports them)
 /**
  * Convert a file URL into an API endpoint
  */
@@ -15,9 +14,16 @@ export function fileToPathname(filePath: string): string {
 
 // https://github.com/wobsoriano/elysia-autoroutes/blob/0d35c8140cd088dfe8908994162fa77926883dd9/src/utils/transformPathToUrl.ts
 export function transformPathToUrl(filePath: string): string {
-	const url = `/${filePath}`; // Add leading slash to the URL
+	let url = `/${filePath}`; // Add leading slash to the URL
+
+	// Replace extension
+	url = url.replace(/\.(ts|js|mjs|mts|cjs|cts|jsx|tsx)$/u, '')
 
 	if (url.length === 1) return url; // If the URL is just "/", return it as is
+
+	// Replace a single occurrence of a period with a / to support flat routes
+	// Replace a single occurrence so it does not affect rest parameters
+	url = url.replace(/([^\.])\.([^\.])/g, '$1/$2');
 
 	const resultUrl = url
 		.split(path.sep)
@@ -36,7 +42,7 @@ export function transformPathToUrl(filePath: string): string {
 	if (finalUrl.length === 0) return '/';
 
 	// Replace multiple slashes with a single slash
-	return finalUrl.replace(/\/{2,}/g, '/');
+	return finalUrl.replace(/\/{2,}/g, '/')
 }
 
 // https://github.com/wobsoriano/elysia-autoroutes/blob/0d35c8140cd088dfe8908994162fa77926883dd9/src/utils/handleParameters.ts

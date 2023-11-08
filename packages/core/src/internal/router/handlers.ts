@@ -33,7 +33,9 @@ export async function handlePage(
 
 	// Bind it so any useLoaderData usages are also bound
 	(Page as any)[loaderDataSymbol] = loaderData;
-	return await Page.bind(Page)();
+	const result = await Page.bind(Page)();
+	elysia.set.headers['Content-Type'] = 'text/html;charset-utf-8';
+	return result;
 }
 
 export async function handleError(

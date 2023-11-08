@@ -6,6 +6,7 @@ import {
 	createRouter,
 	getRoutes,
 	matches,
+	registerNewRoute,
 	setResponse,
 } from 'pulsar/internal';
 
@@ -74,6 +75,18 @@ export default function pulsar(options: PulsarOptions = {}): Plugin[] {
 				const router = await createRouter(vite, routes);
 
 				return () => {
+					vite.watcher.on('add', (file) => {
+						if (matches(file, routes)) {
+							registerNewRoute({
+								filePath: file,
+								server: router,
+								loader: vite,
+								routesDir: routes,
+							});
+							console.log(router.routes)
+						}
+					});
+
 					vite.middlewares.use(async (req, res, next) => {
 						try {
 							// This is null outside of this scope

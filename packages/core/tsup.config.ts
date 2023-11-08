@@ -10,9 +10,8 @@ export default defineConfig({
 	},
 	format: ['cjs', 'esm'],
 	dts: true,
-	sourcemap: true,
 	clean: true,
-	splitting: false,
+	splitting: true,
 	banner: {
 		js: `
 // BANNER START

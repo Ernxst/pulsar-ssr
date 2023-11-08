@@ -81,12 +81,6 @@
 		"vite": "^4.4.9"
 	},
 	"devDependencies": {
-		"@elysiajs/html": "0.7.3",
-		"@types/set-cookie-parser": "2.4.6",
-		"elysia": "0.7.21",
-		"magic-string": "0.30.5",
-		"minimatch": "9.0.3",
-		"set-cookie-parser": "2.6.0",
-		"tiny-glob": "0.2.9"
+		"magic-string": "0.30.5"
 	}
 }

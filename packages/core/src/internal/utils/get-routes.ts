@@ -1,5 +1,5 @@
 import path from 'node:path';
-import { fileToPathname } from 'src/utils/slug';
+import { fileToPathname } from 'src/internal/utils/slug';
 import glob from 'tiny-glob';
 import { PATTERN } from './matches';
 
@@ -8,7 +8,7 @@ export async function getRoutes(routesDir: string) {
 	return await glob(patterns, { absolute: true });
 }
 
-export async function getRouteMap(
+export async function getRoutesMap(
 	routesDir: string
 ): Promise<Record<string, string>> {
 	const routeFiles = await getRoutes(routesDir);

@@ -1,12 +1,15 @@
 import path from 'node:path';
 import MagicString from 'magic-string';
-import { createRouter } from 'src/server/create-router';
-import { createRequest, setResponse } from 'src/server/http';
-import { getRoutes } from 'src/utils/get-routes';
 import type { Plugin } from 'vite';
-import { matches } from './utils/matches';
+import {
+	createRequest,
+	createRouter,
+	getRoutes,
+	matches,
+	setResponse,
+} from 'pulsar/internal';
 
-// TODO: Error boundaries and (nested) layouts
+// TODO: Error boundaries and (nested) layouts and response streaming for pages
 
 export interface PulsarOptions {
 	/**
@@ -34,7 +37,7 @@ export default function pulsar(options: PulsarOptions = {}): Plugin[] {
 			},
 		},
 		{
-			name: 'pulsar-vite',
+			name: 'pulsar-dev-server',
 			transform(code, id) {
 				/**
 				 * Bind the usage of useLoaderData to the outer scope.
@@ -67,14 +70,14 @@ export default function pulsar(options: PulsarOptions = {}): Plugin[] {
 					return { code: string.toString(), map: string.generateMap() };
 				}
 			},
-			async configureServer(server) {
-				const router = await createRouter(server, routes);
+			async configureServer(vite) {
+				const router = await createRouter(vite, routes);
 
 				return () => {
-					server.middlewares.use(async (req, res, next) => {
+					vite.middlewares.use(async (req, res, next) => {
 						try {
 							// This is null outside of this scope
-							const base = server.resolvedUrls?.local[0];
+							const base = vite.resolvedUrls?.local[0];
 							if (!base) throw new Error('Could not get base url');
 
 							const { origin } = new URL(base);
@@ -85,7 +88,7 @@ export default function pulsar(options: PulsarOptions = {}): Plugin[] {
 							const response = await router.handle(request);
 							await setResponse(res, response);
 						} catch (error) {
-							server.ssrFixStacktrace(error as Error);
+							vite.ssrFixStacktrace(error as Error);
 							next(error);
 						}
 					});

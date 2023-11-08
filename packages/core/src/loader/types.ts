@@ -53,6 +53,7 @@ export interface LoaderArgs<
 	 */
 	readonly query: TQuery;
 	readonly cookies: CookieHandler;
+	// TODO: maybe this should be an exported function so we can redirect in components
 	/**
 	 * Redirect to a new path. You can either throw or return this.
 	 * @param path The path to redirect to.

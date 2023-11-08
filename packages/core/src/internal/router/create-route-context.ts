@@ -3,7 +3,7 @@ import { cacheHeader } from 'pretty-cache-header';
 import type { CookieHandler, Runtime } from 'src/loader/types';
 import type { RouteArgs } from 'src/route/types';
 import type { QueryParams, UrlPath } from 'src/types';
-import { getRuntime } from './get-runtime';
+import { getRuntime } from '../utils/get-runtime';
 
 export function createRouteContext<
 	TPath extends UrlPath,

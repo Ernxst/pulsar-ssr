@@ -7,6 +7,34 @@ import { getRoutes } from '../utils/get-routes';
 import { handleError, handlePage, handleRoute } from './handlers';
 import type { ModuleLoader } from './types';
 
+interface Options {
+	filePath: string;
+	server: Elysia;
+	loader: ModuleLoader;
+	routesDir: string;
+}
+
+export function registerNewRoute({
+	filePath,
+	server,
+	loader,
+	routesDir,
+}: Options) {
+	const suffix = filePath.split(routesDir)[1];
+	const endpoint = fileToPathname(suffix);
+	const routes = new Set([
+		endpoint,
+		path.join(endpoint, 'index'),
+		path.join(endpoint, 'index.html'),
+	]);
+
+	routes.forEach((pathname) =>
+		server.all(pathname, (elysia) =>
+			handle({ pathname, elysia, moduleLoader: loader, file: filePath })
+		)
+	);
+}
+
 export async function createRouter(loader: ModuleLoader, routesDir: string) {
 	const routeFiles = await getRoutes(routesDir);
 
@@ -15,20 +43,8 @@ export async function createRouter(loader: ModuleLoader, routesDir: string) {
 		.use(html())
 		.onError((ctx) => handleError(ctx, loader, routesDir));
 
-	for (const file of routeFiles) {
-		const suffix = file.split(routesDir)[1];
-		const endpoint = fileToPathname(suffix);
-		const routes = new Set([
-			endpoint,
-			path.join(endpoint, 'index'),
-			path.join(endpoint, 'index.html'),
-		]);
-
-		routes.forEach((pathname) =>
-			server.all(pathname, (elysia) =>
-				handle({ pathname, elysia, moduleLoader: loader, file })
-			)
-		);
+	for (const filePath of routeFiles) {
+		registerNewRoute({ filePath, server, loader, routesDir });
 	}
 
 	return server;

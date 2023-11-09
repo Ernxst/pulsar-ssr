@@ -35,7 +35,6 @@ export function pulsarTransform({ routesDir }: Options): Plugin {
 				string = transformLoaderData(code, string);
 				string = transformActionData(code, string);
 				string = transformFormAction(relativeFilePath, code, string);
-				// console.log(string.toString());
 
 				return { code: string.toString(), map: string.generateMap() };
 			}

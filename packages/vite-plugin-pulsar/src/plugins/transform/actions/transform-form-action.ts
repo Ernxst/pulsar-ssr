@@ -67,7 +67,6 @@ export function transformFormAction(
 				}
 			}
 
-			console.log(code);
 			const hasActions = /^const actions = /gm.test(code);
 			// TODO: Use an AST for this
 			const hasExportedActions =

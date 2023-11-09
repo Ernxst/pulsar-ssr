@@ -1,7 +1,6 @@
 import { RegExpRouter } from 'hono/router/reg-exp-router';
 import { SmartRouter } from 'hono/router/smart-router';
 import { TrieRouter } from 'hono/router/trie-router';
-import { transformPathToUrl } from 'src/utils/transform-path-to-url';
 import type { RouteFunctionArgs } from 'pulsar/route';
 import { actionDataSymbol, loaderDataSymbol } from 'pulsar/internal';
 import Html from 'pulsar/components';
@@ -21,7 +20,7 @@ export async function createPulsarRouter({
 	});
 
 	const promises = Object.entries(routes).map(
-		async ([sourceUrl, loadModule]) => {
+		async ([_sourceUrl, { endpoint, loadModule }]) => {
 			const {
 				default: Page,
 				loader,
@@ -38,8 +37,6 @@ export async function createPulsarRouter({
 					'You have defined a loader, but do not have a page - the loader will be stripped from the server bundle.'
 				);
 			}
-
-			const endpoint = transformPathToUrl(sourceUrl);
 
 			if (Page) {
 				router.add('GET', endpoint, {

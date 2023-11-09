@@ -1,3 +1,5 @@
+import path from "node:path";
+
 // https://github.com/wobsoriano/elysia-autoroutes/blob/0d35c8140cd088dfe8908994162fa77926883dd9/src/utils/transformPathToUrl.ts
 export function transformPathToUrl(filePath: string): string {
 	let url = `/${filePath}`; // Add leading slash to the URL
@@ -23,10 +25,7 @@ export function transformPathToUrl(filePath: string): string {
 	});
 
 	const resultUrl = url
-		// TODO: How to use this so vite doesn't externalise it?
-		// .split(path.sep)
-		// This will not work on windows
-		.split('/')
+		.split(path.sep)
 		.map((part) => handleParameters(part))
 		.join('/'); // Map and join the URL parts using handleParameters function
 

@@ -1,3 +1,4 @@
+import { transformPathToUrl } from '@pulsarjs/runtime';
 import type { Adapter } from 'src/adapters/types';
 
 interface Options {
@@ -11,6 +12,7 @@ export function createServerEntry({ routes, adapter }: Options): string {
 		importUrl: input,
 		pathname: relative,
 		identifier: `routes_${idx}`,
+		endpoint: transformPathToUrl(relative)
 	}));
 
 	return `
@@ -28,7 +30,10 @@ export function createServerEntry({ routes, adapter }: Options): string {
 		routes: {
 			${routeIds
 				.map(
-					({ pathname, identifier }) => `"${pathname}": () => ${identifier},`
+					({ pathname, identifier, endpoint }) => `"${pathname}": {
+						endpoint: "${endpoint}",
+						loadModule:	() => ${identifier},
+					},`
 				)
 				.join('\n')}
 		}

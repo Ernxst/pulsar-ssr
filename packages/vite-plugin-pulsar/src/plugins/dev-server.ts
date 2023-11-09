@@ -1,6 +1,7 @@
 import { createHttpRequestHandler } from '@pulsarjs/runtime/adapters';
 import { matches } from 'src/utils/matches';
 import type { Plugin } from 'vite';
+import { transformPathToUrl } from '@pulsarjs/runtime';
 import type { Options } from './types';
 
 /**
@@ -31,11 +32,17 @@ export function pulsarDev({ routes, routesDir }: Options): Plugin {
 				}
 			});
 
-			const entries = routes.map((entry) => [
-				entry.split(routesDir)[1],
-				// Function so each entry can be lazily loaded for better startup time
-				() => vite.ssrLoadModule(entry),
-			]);
+			const entries = routes.map((entry) => {
+				const relativeUrl = entry.split(routesDir)[1];
+				return [
+					relativeUrl,
+					{
+						endpoint: transformPathToUrl(relativeUrl),
+						// Function so each entry can be lazily loaded for better startup time
+						loadModule: () => vite.ssrLoadModule(entry)
+					},
+				] as const
+			});
 
 			const handle = createHttpRequestHandler({
 				build: {

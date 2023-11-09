@@ -1,4 +1,4 @@
-import type { Adapter } from '../../adapters/types';
+import type { Adapter } from 'src/adapters/types';
 
 interface Options {
 	adapter: Adapter;

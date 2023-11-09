@@ -89,26 +89,26 @@ export async function createRouteContext<
 			resStatus = status;
 		},
 
-		json(body = {} as any, status = 200 as any) {
-			resStatus = status;
+		json(body = {} as any, status) {
+			if (status) resStatus = status;
 			resHeaders.set('Content-Type', 'application/json; charset=utf8');
 			return body;
 		},
 
-		text(body, status = 200 as any) {
-			resStatus = status;
+		text(body, status) {
+			if (status) resStatus = status;
 			resHeaders.set('Content-Type', 'text/plain; charset=utf8');
 			return body;
 		},
 
-		html(body, status = 200 as any) {
-			resStatus = status;
+		html(body, status) {
+			if (status) resStatus = status;
 			resHeaders.set('Content-Type', 'text/html; charset=utf8');
 			return body;
 		},
 
-		xml(body, status = 200 as any) {
-			resStatus = status;
+		xml(body, status) {
+			if (status) resStatus = status;
 			resHeaders.set('Content-Type', 'text/xml; charset=utf8');
 			return body;
 		},

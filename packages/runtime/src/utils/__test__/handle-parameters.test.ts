@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test';
-import { handleParameters } from '../file-to-pathname';
+import { handleParameters } from '../transform-path-to-url';
 
 describe('handleParameters', () => {
 	it('[spark]', () => {

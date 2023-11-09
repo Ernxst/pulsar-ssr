@@ -1,11 +1,11 @@
-import type { LoaderArgs } from 'src/loader/types';
+import type { LoaderFunctionArgs } from 'src/loader/types';
 import type { QueryParams, UrlPath } from 'src/types';
 
-export interface RouteArgs<
+export interface RouteFunctionArgs<
 	TPath extends UrlPath = any,
 	TQuery extends QueryParams = QueryParams,
 	TBody = unknown,
-> extends LoaderArgs<TPath, TQuery> {
+> extends LoaderFunctionArgs<TPath, TQuery> {
 	/**
 	 * The parsed request body. If you have supplied a body schema, it
 	 * will have been validated against it.
@@ -13,14 +13,19 @@ export interface RouteArgs<
 	body: TBody;
 }
 
-export type Route<
+export type RouteFunction<
 	TPath extends UrlPath,
 	TQuery extends QueryParams,
 	TBody,
 	TOut,
-> = (context: RouteArgs<TPath, TQuery, TBody>) => TOut;
+> = (context: RouteFunctionArgs<TPath, TQuery, TBody>) => TOut;
 
-export type inferRouteOutput<TRoute extends Route<any, any, any, any>> =
-	TRoute extends Route<infer _TPath, infer _TQuery, infer _Body, infer TData>
+export type inferRouteOutput<TRoute extends RouteFunction<any, any, any, any>> =
+	TRoute extends RouteFunction<
+		infer _TPath,
+		infer _TQuery,
+		infer _Body,
+		infer TData
+	>
 		? TData
 		: never;

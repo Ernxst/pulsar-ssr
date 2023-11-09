@@ -1,8 +1,9 @@
-export type { QueryParams, inferPathParams } from './types';
+export type { UrlPath, QueryParams, inferPathParams } from './types';
 
 export type {
 	CacheOptions,
 	CookieHandler,
 	RedirectStatus,
-	Runtime,
 } from 'src/loader/types';
+
+export type { Runtime } from 'hono/adapter';

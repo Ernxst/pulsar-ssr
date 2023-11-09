@@ -1,8 +1,8 @@
 {
-	"name": "@pulsarjs/plugin-vite",
+	"name": "@pulsarjs/vite-plugin-pulsar",
 	"type": "module",
 	"version": "0.0.1",
-	"description": "A lightweight SSR JSX meta-framework built on Elysia",
+	"description": "A lightweight SSR JSX meta-framework built on Hono",
 	"author": "Ernest Nkansah-Badu <ernestjbadu@outlook.com>",
 	"license": "MIT",
 	"homepage": "https://pulsarjs.dev",
@@ -31,6 +31,16 @@
 				"types": "./dist/index.d.cts",
 				"default": "./dist/index.cjs"
 			}
+		},
+		"./adapters": {
+			"import": {
+				"types": "./dist/adapters/index.d.ts",
+				"default": "./dist/adapters/index.js"
+			},
+			"require": {
+				"types": "./dist/adapters/index.d.cts",
+				"default": "./dist/adapters/index.cjs"
+			}
 		}
 	},
 	"main": "./dist/index.cjs",
@@ -41,6 +51,10 @@
 			".": [
 				"./dist/index.d.ts",
 				"./dist/index.d.cts"
+			],
+			"adapters": [
+				"./dist/adapters/index.d.ts",
+				"./dist/adapters/index.d.cts"
 			]
 		}
 	},
@@ -81,6 +95,9 @@
 		"vite": "^4.4.9"
 	},
 	"devDependencies": {
-		"magic-string": "0.30.5"
+		"@pulsarjs/runtime": "workspace:*",
+		"magic-string": "0.30.5",
+		"minimatch": "9.0.3",
+		"tiny-glob": "0.2.9"
 	}
 }

@@ -1,23 +1,30 @@
-import { type LoaderArgs, useLoaderData } from 'pulsar/loader';
-import type { RouteArgs } from 'pulsar/route';
+import { type LoaderFunctionArgs, useLoaderData } from 'pulsar/loader';
+import type { RouteFunctionArgs } from 'pulsar/route';
+import Html from 'pulsar/components';
 import globalCssHref from '../global.css?url';
 import Button from '../components/Button';
 
-export function POST({ request, response, runtime, cache, json }: RouteArgs) {
+export function POST({
+	request,
+	response,
+	runtime,
+	cache,
+	json,
+}: RouteFunctionArgs) {
 	cache({ maxAge: '2h' });
 	response.headers.set('x-powered-by', runtime);
 	return json({ runtime, userAgent: request.headers.get('user-agent') });
 }
 
-export function PUT({ json }: RouteArgs) {
+export function PUT({ json }: RouteFunctionArgs) {
 	return json({ foo: '' });
 }
 
-export async function PATCH({ json }: RouteArgs) {
+export async function PATCH({ json }: RouteFunctionArgs) {
 	return json({ foo: '' });
 }
 
-export function loader({ request, runtime }: LoaderArgs) {
+export function loader({ request, runtime }: LoaderFunctionArgs) {
 	const users = [
 		{ id: 1, name: 'John Doe', cookie: request.headers.get('cookie') },
 	];
@@ -28,7 +35,6 @@ export default function Page() {
 	const { users, runtime } = useLoaderData<typeof loader>();
 	console.log('I am run on the server!');
 
-	// TODO: Fix these typescript errors
 	return (
 		<>
 			<html>
@@ -37,12 +43,12 @@ export default function Page() {
 				</head>
 				<body>
 					<h1>Hello World</h1>
-					<p>Served on {runtime}</p>
+					<p>Served on the {runtime} runtime</p>
 					<Button>Click me</Button>
 
 					<ul>
 						{users.map((user) => (
-							<li key={user.id}>{user.name}</li>
+							<li safe>{user.name}</li>
 						))}
 					</ul>
 				</body>

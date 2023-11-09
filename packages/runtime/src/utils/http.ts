@@ -7,8 +7,8 @@ import { splitCookiesString } from 'set-cookie-parser';
 const clientAddressSymbol = Symbol.for('pulsar.clientAddress');
 
 /*
-  Credits to the SvelteKit team
-  https://github.com/sveltejs/kit/blob/8d1ba04825a540324bc003e85f36559a594aadc2/packages/kit/src/exports/node/index.js
+	Credits to the SvelteKit team
+	https://github.com/sveltejs/kit/blob/8d1ba04825a540324bc003e85f36559a594aadc2/packages/kit/src/exports/node/index.js
 */
 
 function get_raw_body(
@@ -103,12 +103,17 @@ function get_raw_body(
 	});
 }
 
-export async function createRequest(
-	base: string,
+/**
+ * Note: Ensure {@linkcode IncomingMessage.url} is correct before passing
+ * it here
+ * @param req
+ */
+export function createPulsarRequest(
 	req: IncomingMessage,
 	bodySizeLimit?: number
-): Promise<Request> {
+): Request {
 	const headers = req.headers as Record<string, string>;
+	const base = '';
 	const request = new Request(base + req.url, {
 		duplex: 'half',
 		method: req.method,
@@ -119,7 +124,7 @@ export async function createRequest(
 	return request;
 }
 
-export async function setResponse(
+export async function sendPulsarResponse(
 	res: ServerResponse,
 	response: Response
 ): Promise<void> {

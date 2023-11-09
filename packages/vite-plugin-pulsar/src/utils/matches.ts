@@ -1,9 +1,8 @@
 import path from 'node:path';
 import { minimatch } from 'minimatch';
-
-export const PATTERN = '**/*.{page,server}.{ts,js,tsx,jsx}';
+import { ROUTE_PATTERN } from 'pulsar/internal';
 
 export function matches(id: string, routesDir: string): boolean {
-	const patterns = path.join(routesDir, PATTERN);
+	const patterns = path.join(routesDir, ROUTE_PATTERN);
 	return minimatch(id, patterns);
 }

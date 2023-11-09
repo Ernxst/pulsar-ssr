@@ -1,23 +1,12 @@
-import path from 'node:path';
-
-// TODO: Support optional routes (when elysia supports them)
-/**
- * Convert a file URL into an API endpoint
- */
-export function fileToPathname(filePath: string): string {
-	filePath = filePath
-		.replace('.page', '')
-		.replace('.server', '')
-
-	return transformPathToUrl(filePath);
-}
-
 // https://github.com/wobsoriano/elysia-autoroutes/blob/0d35c8140cd088dfe8908994162fa77926883dd9/src/utils/transformPathToUrl.ts
 export function transformPathToUrl(filePath: string): string {
 	let url = `/${filePath}`; // Add leading slash to the URL
 
-	// Replace extension
-	url = url.replace(/\.(ts|js|mjs|mts|cjs|cts|jsx|tsx)$/u, '')
+	url = url
+		.replace('.page', '')
+		.replace('.server', '')
+		// Replace extension
+		.replace(/\.(ts|js|mjs|mts|cjs|cts|jsx|tsx)$/u, '');
 
 	if (url.length === 1) return url; // If the URL is just "/", return it as is
 
@@ -26,7 +15,10 @@ export function transformPathToUrl(filePath: string): string {
 	url = url.replace(/([^\.])\.([^\.])/g, '$1/$2');
 
 	const resultUrl = url
-		.split(path.sep)
+		// TODO: How to use this so vite doesn't externalise it?
+		// .split(path.sep)
+		// This will not work on windows
+		.split('/')
 		.map((part) => handleParameters(part))
 		.join('/'); // Map and join the URL parts using handleParameters function
 
@@ -42,7 +34,7 @@ export function transformPathToUrl(filePath: string): string {
 	if (finalUrl.length === 0) return '/';
 
 	// Replace multiple slashes with a single slash
-	return finalUrl.replace(/\/{2,}/g, '/')
+	return finalUrl.replace(/\/{2,}/g, '/');
 }
 
 // https://github.com/wobsoriano/elysia-autoroutes/blob/0d35c8140cd088dfe8908994162fa77926883dd9/src/utils/handleParameters.ts
@@ -53,6 +45,12 @@ export function handleParameters(token: string) {
 
 		// Handle wild card based routes - users/[...id]/profile.ts -> users/*/profile
 		{ regex: /\[\.\.\..+\]/gu, replacement: '*' },
+
+		// Handle generic optional path parameter routes - users/[[id]]/index.ts -> users/:id?
+		{
+			regex: /\[\[(.*?)\]\]/gu,
+			replacement: (_subString: string, match: string) => `:${match}?`,
+		},
 
 		// Handle generic square bracket based routes - users/[id]/index.ts -> users/:id
 		{

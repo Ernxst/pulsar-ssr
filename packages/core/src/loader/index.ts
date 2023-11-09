@@ -1,11 +1,14 @@
-import type { Loader, inferLoaderData } from './types';
+import { loaderDataSymbol } from 'src/internal/constants';
+import type { LoaderFunction, inferLoaderData } from './types';
 
-export type { Loader, LoaderArgs, inferLoaderData } from './types';
-
-export const loaderDataSymbol = 'pulsar:loaderData'; // Symbol('pulsar:loaderData')
+export type {
+	LoaderFunction,
+	LoaderFunctionArgs,
+	inferLoaderData,
+} from './types';
 
 export function useLoaderData<
-	TLoader extends Loader<any, any, any>,
+	TLoader extends LoaderFunction<any, any, any>,
 >(): inferLoaderData<TLoader> {
 	// This will be set through function binding at build-time
 	// @ts-expect-error it's fine

@@ -12,12 +12,4 @@ export default defineConfig({
 	dts: true,
 	clean: true,
 	splitting: true,
-	banner: {
-		js: `
-// BANNER START
-const require = (await import("node:module")).createRequire(import.meta.url);
-const __filename = (await import("node:url")).fileURLToPath(import.meta.url);
-// BANNER END
-`,
-	},
 });

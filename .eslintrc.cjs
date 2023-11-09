@@ -21,6 +21,7 @@ module.exports = {
 		'@stylistic/ts/member-delimiter-style': 'off',
 		'@stylistic/js/no-mixed-spaces-and-tabs': 'off',
 		'@stylistic/js/operator-linebreak': 'off',
+		'@stylistic/js/multiline-ternary': 'off',
 		'@typescript-eslint/brace-style': 'off',
 		'@typescript-eslint/semi': 'off',
 		'@typescript-eslint/quotes': 'off',

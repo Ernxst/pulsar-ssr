@@ -1,28 +1,19 @@
-import type { CookieOptions } from 'elysia';
+import type { CookieOptions } from 'hono/utils/cookie';
 import type { cacheHeader } from 'pretty-cache-header';
 import type { QueryParams, UrlPath, inferPathParams } from 'src/types';
+import type { Runtime } from 'hono/adapter';
 
 export type RedirectStatus = 301 | 302 | 303 | 307 | 308;
 
 export type CacheOptions = Parameters<typeof cacheHeader>[0];
 
-export type Runtime =
-	| 'other'
-	| 'node'
-	| 'deno'
-	| 'bun'
-	| 'workerd'
-	| 'fastly'
-	| 'edge-light'
-	| 'lagon';
-
 export interface CookieHandler {
 	get(name: string): unknown | undefined;
-	set(name: string, value: unknown, options?: CookieOptions): void;
-	delete(name: string): void;
+	set(name: string, value: string, options?: CookieOptions): void;
+	delete(name: string, options?: CookieOptions): void;
 }
 
-export interface LoaderArgs<
+export interface LoaderFunctionArgs<
 	TPath extends UrlPath = any,
 	TQuery extends QueryParams = QueryParams,
 > {
@@ -49,11 +40,11 @@ export interface LoaderArgs<
 	readonly params: inferPathParams<TPath>;
 	/**
 	 * The query parameters, parsed from the URL, as an object. To access the
-	 * query string as a string, use {@linkcode Request.url.search}
+	 * query string as a string, use {@linkcode URL.search}
 	 */
 	readonly query: TQuery;
 	readonly cookies: CookieHandler;
-	// TODO: maybe this should be an exported function so we can redirect in components
+	// TODO: this should be an exported function so we can redirect in components
 	/**
 	 * Redirect to a new path. You can either throw or return this.
 	 * @param path The path to redirect to.
@@ -88,10 +79,11 @@ export interface LoaderArgs<
 	xml<TString extends string>(body: TString, status?: number): TString;
 }
 
-export type Loader<TPath extends UrlPath, TQuery extends QueryParams, TOut> = (
-	context: LoaderArgs<TPath, TQuery>
-) => TOut;
+export type LoaderFunction<
+	TPath extends UrlPath = any,
+	TQuery extends QueryParams = QueryParams,
+	TOut = any,
+> = (context: LoaderFunctionArgs<TPath, TQuery>) => TOut;
 
-export type inferLoaderData<TLoader extends Loader<any, any, any>> = Awaited<
-	ReturnType<TLoader>
->;
+export type inferLoaderData<TLoader extends LoaderFunction<any, any, any>> =
+	Awaited<ReturnType<TLoader>>;

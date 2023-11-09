@@ -11,19 +11,14 @@
 	"cSpell.words": [
 		"antfu",
 		"commitlint",
-		"effectio",
-		"elysia",
-		"elysiajs",
+		"hono",
 		"kitajs",
 		"linkcode",
-		"phenomnomnominal",
 		"postbuild",
 		"publint",
 		"pulsarjs",
-		"tsquery",
 		"tsup",
-		"typecheck",
-		"Unplugin"
+		"typecheck"
 	],
 	"editor.codeActionsOnSave": {
 		"source.fixAll.eslint": true

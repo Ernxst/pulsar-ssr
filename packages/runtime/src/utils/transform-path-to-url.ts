@@ -1,4 +1,4 @@
-import path from "node:path";
+import path from 'node:path';
 
 // https://github.com/wobsoriano/elysia-autoroutes/blob/0d35c8140cd088dfe8908994162fa77926883dd9/src/utils/transformPathToUrl.ts
 export function transformPathToUrl(filePath: string): string {
@@ -20,8 +20,8 @@ export function transformPathToUrl(filePath: string): string {
 	 */
 	// url = url.replace(/([^(\[.])\.([^.)\]])/g, '$1/$2');
 	url = url.replace(/[^.]*\.(?![^[]*\])(?![^(]*\))[^.]*/g, (matches) => {
-		const [first, ...rest] = matches.split(".");
-		return `${first}/${rest}`
+		const [first, ...rest] = matches.split('.');
+		return `${first}/${rest}`;
 	});
 
 	const resultUrl = url

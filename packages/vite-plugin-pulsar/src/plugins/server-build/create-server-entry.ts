@@ -12,7 +12,7 @@ export function createServerEntry({ routes, adapter }: Options): string {
 		importUrl: input,
 		pathname: relative,
 		identifier: `routes_${idx}`,
-		endpoint: transformPathToUrl(relative)
+		endpoint: transformPathToUrl(relative),
 	}));
 
 	return `

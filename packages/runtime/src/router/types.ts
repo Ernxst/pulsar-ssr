@@ -14,7 +14,10 @@ type HTTPMethod =
 
 export interface ServerBuild {
 	/** Map of source file URL to the built module */
-	routes: Record<string, { endpoint: string, loadModule: () => Promise<PulsarModule> }>;
+	routes: Record<
+		string,
+		{ endpoint: string; loadModule: () => Promise<PulsarModule> }
+	>;
 }
 
 export interface ServerBuildConfig {

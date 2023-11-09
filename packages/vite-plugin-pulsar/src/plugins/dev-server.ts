@@ -39,9 +39,9 @@ export function pulsarDev({ routes, routesDir }: Options): Plugin {
 					{
 						endpoint: transformPathToUrl(relativeUrl),
 						// Function so each entry can be lazily loaded for better startup time
-						loadModule: () => vite.ssrLoadModule(entry)
+						loadModule: () => vite.ssrLoadModule(entry),
 					},
-				] as const
+				] as const;
 			});
 
 			const handle = createHttpRequestHandler({

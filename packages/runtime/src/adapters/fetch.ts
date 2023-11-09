@@ -63,6 +63,7 @@ export function createFetchRequestHandler({
 			}
 		}
 
+		console.log(response.status, request.method.toUpperCase(), url.pathname);
 		/** HEAD requests have no body, as per the spec */
 		if (request.method === 'HEAD') {
 			return new Response(null, {

@@ -2,7 +2,6 @@ import type { LoaderFunctionArgs } from 'pulsar/loader';
 import { useLoaderData } from 'pulsar/loader';
 import * as data from '../../data';
 import appStylesHref from '../../app.css?url';
-import Html from 'pulsar/components';
 
 export async function loader({ request, json }: LoaderFunctionArgs) {
 	const url = new URL(request.url);

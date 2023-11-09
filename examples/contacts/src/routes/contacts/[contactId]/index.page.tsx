@@ -1,6 +1,5 @@
 import type { LoaderFunctionArgs } from 'pulsar/loader';
 import { useLoaderData } from 'pulsar/loader';
-import Html from 'pulsar/components';
 import invariant from 'tiny-invariant';
 import { getContact } from '../../../data';
 

@@ -1,3 +1,4 @@
+import type { Actions } from 'pulsar/actions';
 import type { LoaderFunction } from 'pulsar/loader';
 import type { RouteFunction } from 'pulsar/route';
 
@@ -28,6 +29,7 @@ export interface ServerBuildConfig {
 export type PulsarModule = {
 	[K in HTTPMethod]?: RouteFunction<any, any, any, any>;
 } & {
+	actions?: Actions;
 	loader?: LoaderFunction<any, any, any>;
 	/**
 	 * page component

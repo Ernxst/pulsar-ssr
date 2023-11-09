@@ -42,6 +42,16 @@
 				"default": "./dist/components/index.cjs"
 			}
 		},
+		"./actions": {
+			"import": {
+				"types": "./dist/actions/index.d.ts",
+				"default": "./dist/actions/index.js"
+			},
+			"require": {
+				"types": "./dist/actions/index.d.cts",
+				"default": "./dist/actions/index.cjs"
+			}
+		},
 		"./loader": {
 			"import": {
 				"types": "./dist/loader/index.d.ts",
@@ -89,6 +99,10 @@
 			"internal": [
 				"./dist/internal/index.d.ts",
 				"./dist/internal/index.d.cts"
+			],
+			"actions": [
+				"./dist/actions/index.d.ts",
+				"./dist/actions/index.d.cts"
 			],
 			"loader": [
 				"./dist/loader/index.d.ts",

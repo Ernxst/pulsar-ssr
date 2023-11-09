@@ -5,6 +5,7 @@ export default defineConfig({
 		index: 'src/index.ts',
 		'components/index': 'src/components/index.ts',
 		'internal/index': 'src/internal/index.ts',
+		'actions/index': 'src/actions/index.ts',
 		'loader/index': 'src/loader/index.ts',
 		'route/index': 'src/route/index.ts',
 	},

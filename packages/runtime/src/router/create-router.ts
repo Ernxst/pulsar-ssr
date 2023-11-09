@@ -3,8 +3,9 @@ import { SmartRouter } from 'hono/router/smart-router';
 import { TrieRouter } from 'hono/router/trie-router';
 import { transformPathToUrl } from 'src/utils/transform-path-to-url';
 import type { RouteFunctionArgs } from 'pulsar/route';
-import { loaderDataSymbol } from 'pulsar/internal';
+import { actionDataSymbol, loaderDataSymbol } from 'pulsar/internal';
 import Html from 'pulsar/components';
+import { createActionUrl } from 'src/utils/create-action-url';
 import type { ServerBuild } from './types';
 
 export interface RouteHandler {
@@ -21,7 +22,12 @@ export async function createPulsarRouter({
 
 	const promises = Object.entries(routes).map(
 		async ([sourceUrl, loadModule]) => {
-			const { default: Page, loader, ...handlers } = await loadModule();
+			const {
+				default: Page,
+				loader,
+				actions = {},
+				...handlers
+			} = await loadModule();
 
 			if (handlers.GET && Page) {
 				throw new Error('Cannot have a GET route and a page in the same route');
@@ -41,6 +47,7 @@ export async function createPulsarRouter({
 					async handle(ctx) {
 						let loaderData;
 
+						// Loader is executed with the page, not on a separate route
 						if (loader) {
 							loaderData = await loader(ctx);
 						}
@@ -54,6 +61,18 @@ export async function createPulsarRouter({
 					},
 				});
 			}
+
+			Object.entries(actions).forEach(([actionName, handler]) => {
+				const actionEndpoint = createActionUrl(endpoint, actionName);
+				router.add('POST', actionEndpoint, {
+					path: actionEndpoint,
+					async handle(context) {
+						const actionData = await handler(context);
+						// Bind it so any useActionData usages are also bound
+						(Page as any)[actionDataSymbol] = actionData;
+					},
+				});
+			});
 
 			Object.entries(handlers).forEach(([method, handler]) => {
 				router.add(method, endpoint, { path: endpoint, handle: handler! });

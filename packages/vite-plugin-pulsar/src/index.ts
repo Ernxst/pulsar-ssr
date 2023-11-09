@@ -1,14 +1,14 @@
-import path from 'node:path';
 import fs from 'node:fs';
-import type { Plugin } from 'vite';
-import glob from 'tiny-glob/sync';
+import path from 'node:path';
 import { ROUTE_PATTERN } from 'pulsar/internal';
+import { pulsarConfig } from 'src/plugins/config';
 import { pulsarDev } from 'src/plugins/dev-server';
 import { pulsarServerBuild } from 'src/plugins/server-build';
 import { pulsarTransform } from 'src/plugins/transform';
-import { pulsarConfig } from 'src/plugins/config';
-import type { Options } from './plugins/types';
+import glob from 'tiny-glob/sync';
+import type { Plugin } from 'vite';
 import type { Adapter } from './adapters';
+import type { Options } from './plugins/types';
 
 // TODO: Error boundaries and (nested) layouts and response streaming for pages
 

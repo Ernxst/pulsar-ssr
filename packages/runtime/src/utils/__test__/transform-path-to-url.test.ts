@@ -1,8 +1,6 @@
 import { describe, expect, it } from 'bun:test';
 import { transformPathToUrl } from '../transform-path-to-url';
 
-// TODO: Add tests for flat routes
-
 describe('transformPathToUrl', () => {
 	describe('index routes', () => {});
 	it('index route with no extension', () => {

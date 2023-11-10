@@ -1,6 +1,6 @@
 import { type LoaderFunctionArgs, useLoaderData } from 'pulsar/loader';
 import type { RouteFunctionArgs } from 'pulsar/route';
-import Html from 'pulsar/components';
+import Html, { LiveReload } from 'pulsar/components';
 import globalCssHref from '../global.css?url';
 import Button from '../components/Button';
 
@@ -51,6 +51,8 @@ export default function Page() {
 							<li safe>{user.name}</li>
 						))}
 					</ul>
+					{/* TODO: When layouts are ready - this can be moved to the layout */}
+					<LiveReload />
 				</body>
 			</html>
 		</>

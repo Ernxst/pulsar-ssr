@@ -7,6 +7,8 @@ export type { Children, Component, PropsWithChildren } from '@kitajs/html';
 
 export { Html as default } from '@kitajs/html';
 
+export { LiveReload } from './LiveReload';
+
 // eslint-disable-next-line @typescript-eslint/ban-types
 type AnyString = string & {};
 

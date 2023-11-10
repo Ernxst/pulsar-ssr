@@ -2,13 +2,12 @@ import { RegExpRouter } from 'hono/router/reg-exp-router';
 import { SmartRouter } from 'hono/router/smart-router';
 import { TrieRouter } from 'hono/router/trie-router';
 import type { RouteFunctionArgs } from 'pulsar/route';
-import { actionDataSymbol, loaderDataSymbol } from 'pulsar/internal';
+import { actionDataSymbol, loaderDataSymbol, notFound } from 'pulsar/internal';
 import Html from 'pulsar/components';
 import {
 	PULSAR_FORM_ACTIONS_ENDPOINT,
 	PULSAR_FORM_ACTIONS_METHOD,
 } from 'src/utils/create-action-url';
-import { redirect } from 'pulsar';
 import type { HTTPMethod, ServerBuild } from './types';
 
 export interface RouteHandler {
@@ -75,8 +74,7 @@ export function createPulsarRouter({ routes }: ServerBuild) {
 					return await handle(ctx);
 				}
 
-				// TODO: Throw 404 that is caught
-				return redirect('/404');
+				return notFound(ctx.request.url)
 			},
 		});
 	});

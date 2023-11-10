@@ -1,4 +1,5 @@
-import { createRouteContext, isRedirect } from 'pulsar/internal';
+import { SmartRouter } from 'hono/router/smart-router';
+import { createRouteContext, isNotFound, isRedirect } from 'pulsar/internal';
 import { createResponse } from 'src/router/create-response';
 import type { RouteHandler } from 'src/router/create-router';
 import { createPulsarRouter } from 'src/router/create-router';
@@ -32,6 +33,17 @@ async function render(
 	});
 }
 
+async function handleNotFound(router: SmartRouter<RouteHandler>, url: URL) {
+	const [notFoundHandler, stash] = router.match('GET', '/404');
+	if (notFoundHandler.length) {
+		const reqUrl = new URL('/404', url.origin);
+		const request = new Request(reqUrl.toString());
+		return await render(request, notFoundHandler[0], stash, 404);
+	} else {
+		throw new Error(`404 Not Found ${url.pathname}`);
+	}
+}
+
 export function createFetchRequestHandler({
 	build,
 }: {
@@ -56,19 +68,14 @@ export function createFetchRequestHandler({
 						status: error.status,
 						headers: { Location: error.path.toString() },
 					});
+				} else if (isNotFound(error)) {
+					response = await handleNotFound(router, url);
 				} else {
 					throw error;
 				}
 			}
 		} else {
-			const [notFoundHandler, stash] = router.match('GET', '/404');
-			if (notFoundHandler.length) {
-				const reqUrl = new URL('/404', url.origin);
-				const request = new Request(reqUrl.toString());
-				response = await render(request, notFoundHandler[0], stash, 404);
-			} else {
-				throw new Error(`404 Not Found ${url.pathname}`);
-			}
+			response = await handleNotFound(router, url);
 		}
 
 		console.log(response.status, method, endpoint);

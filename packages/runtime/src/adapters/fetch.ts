@@ -1,7 +1,7 @@
 import { createRouteContext } from 'pulsar/internal';
 import { createResponse } from 'src/router/create-response';
+import type { RouteHandler } from 'src/router/create-router';
 import { createPulsarRouter } from 'src/router/create-router';
-import type { RouteHandler } from 'src/router/create-router/types';
 import type { ServerBuild } from 'src/router/types';
 
 type FetchHandler = (request: Request) => Promise<Response>;

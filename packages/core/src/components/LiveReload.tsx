@@ -1,5 +1,6 @@
 /// <reference lib="dom" />
 /// <reference lib="dom.iterable" />
+import Html from '@kitajs/html';
 
 interface LogMessage {
 	type: 'LOG';
@@ -16,9 +17,14 @@ interface HmrMessage {
 	type: 'HMR';
 }
 
-type Message = LogMessage | ReloadMessage | HmrMessage;
+interface ConnectedMessage {
+	type: 'connected';
+}
+
+type Message = LogMessage | ReloadMessage | HmrMessage | ConnectedMessage;
 
 function liveReloadConnect(config?: { onOpen: () => any }) {
+	console.debug('[vite] connecting...');
 	const protocol = String(process.env.PULSAR_HMR_PROTOCOL);
 	const hostname = window.location.hostname;
 	const url = new URL(`${protocol}//${hostname}/socket`);
@@ -27,7 +33,9 @@ function liveReloadConnect(config?: { onOpen: () => any }) {
 	const ws = new WebSocket(url.href);
 	ws.onmessage = (message) => {
 		const event = JSON.parse(message.data) as Message;
-		if (event.type === 'LOG') {
+		if (event.type === 'connected') {
+			console.debug('[vite] connected.')
+		} else if (event.type === 'LOG') {
 			console.log(event.message);
 		} else if (event.type === 'RELOAD') {
 			if (window.location.pathname === event.endpoint) {

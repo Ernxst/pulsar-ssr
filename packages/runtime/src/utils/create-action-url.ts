@@ -3,6 +3,6 @@ export const PULSAR_FORM_ACTIONS_ENDPOINT =
 export const PULSAR_FORM_ACTIONS_METHOD = 'POST';
 
 export function createActionUrl(filename: string, actionName: string) {
-	const pathname = filename.startsWith("/") ? filename.slice(1) : filename
+	const pathname = filename.startsWith('/') ? filename.slice(1) : filename;
 	return `/__pulsar-form-actions__/${pathname}/${actionName}`;
 }

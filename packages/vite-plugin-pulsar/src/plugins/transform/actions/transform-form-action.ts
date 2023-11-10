@@ -62,7 +62,11 @@ export function transformFormAction(
 						prop: 'method',
 						value: method,
 					});
-					string.overwrite(start, end, `method: "${PULSAR_FORM_ACTIONS_METHOD}"`);
+					string.overwrite(
+						start,
+						end,
+						`method: "${PULSAR_FORM_ACTIONS_METHOD}"`
+					);
 				}
 			}
 

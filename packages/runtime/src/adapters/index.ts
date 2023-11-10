@@ -1,2 +1,2 @@
-export { createFetchRequestHandler } from './fetch';
-export { createHttpRequestHandler } from './http';
+export { createFetchRequestHandler, type PulsarFetchHandler } from './fetch';
+export { createHttpRequestHandler, type PulsarHttpHandler } from './http';

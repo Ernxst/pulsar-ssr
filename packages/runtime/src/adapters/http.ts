@@ -19,3 +19,5 @@ export function createHttpRequestHandler({ build }: { build: ServerBuild }) {
 		sendPulsarResponse(res, response);
 	};
 }
+
+export type PulsarHttpHandler = ReturnType<typeof createHttpRequestHandler>;

@@ -76,3 +76,5 @@ export function createFetchRequestHandler({
 		return response;
 	};
 }
+
+export type PulsarFetchHandler = ReturnType<typeof createFetchRequestHandler>;

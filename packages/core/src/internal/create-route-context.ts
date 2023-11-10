@@ -1,7 +1,12 @@
 import qs from 'fast-querystring';
 import { type Runtime, getRuntimeKey } from 'hono/adapter';
 import { parseBody } from 'hono/utils/body';
-import { parse, serialize } from 'hono/utils/cookie';
+import {
+	parse,
+	parseSigned,
+	serialize,
+	serializeSigned,
+} from 'hono/utils/cookie';
 import { cacheHeader } from 'pretty-cache-header';
 import type { QueryParams, UrlPath, inferPathParams } from 'src/types';
 import type { RouteFunctionArgs } from 'src/route';
@@ -56,17 +61,21 @@ export async function createRouteContext<
 		},
 
 		get cookies(): CookieHandler {
-			// TODO: Should we be using signed cookies instead?
 			return {
-				set(name, value, options) {
-					const cookie = serialize(name, value, options);
+				async set(name, value, { secret, ...options } = {}) {
+					const cookie = secret
+						? await serializeSigned(name, value, secret, options)
+						: serialize(name, value, options);
+
 					resHeaders.append('Cookie', cookie);
 				},
-				get(name) {
+				async get(name, secret) {
 					const cookie = request.headers.get('Cookie');
 					if (!cookie) return undefined;
 
-					const obj = parse(cookie);
+					const obj = secret
+						? await parseSigned(cookie, secret)
+						: parse(cookie);
 					return obj[name];
 				},
 				delete(name, options) {

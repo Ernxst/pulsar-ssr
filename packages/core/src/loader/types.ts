@@ -5,10 +5,21 @@ import type { Runtime } from 'hono/adapter';
 
 export type CacheOptions = Parameters<typeof cacheHeader>[0];
 
+export interface PulsarCookieOptions extends CookieOptions {
+	/**
+	 * Set this to sign your cookies
+	 */
+	secret?: string;
+}
+
 export interface CookieHandler {
-	get(name: string): unknown | undefined;
-	set(name: string, value: string, options?: CookieOptions): void;
-	delete(name: string, options?: CookieOptions): void;
+	get(name: string, secret?: string): Promise<unknown | undefined>;
+	set(
+		name: string,
+		value: string,
+		options?: PulsarCookieOptions
+	): Promise<void>;
+	delete(name: string, options?: PulsarCookieOptions): void;
 }
 
 export interface LoaderFunctionArgs<

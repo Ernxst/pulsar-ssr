@@ -101,7 +101,9 @@ export function transformFormAction(
 			string.overwrite(
 				start,
 				end,
-				`action: createActionUrl("${endpoint}", "${formaction}")`
+				`action: createActionUrl("${absoluteFilePath}", "${formaction}")
+					${method ? '' : ', method: "POST"'}
+					`
 			);
 		}
 	});

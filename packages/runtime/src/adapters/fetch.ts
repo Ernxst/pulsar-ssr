@@ -1,4 +1,4 @@
-import { createRouteContext } from 'pulsar/internal';
+import { createRouteContext, isRedirect } from 'pulsar/internal';
 import { createResponse } from 'src/router/create-response';
 import type { RouteHandler } from 'src/router/create-router';
 import { createPulsarRouter } from 'src/router/create-router';
@@ -48,7 +48,18 @@ export function createFetchRequestHandler({
 
 		const [handlers, stash] = router.match(method, url.pathname);
 		if (handlers.length) {
-			response = await render(request, handlers[0], stash);
+			try {
+				response = await render(request, handlers[0], stash);
+			} catch (error) {
+				if (isRedirect(error)) {
+					response = new Response(null, {
+						status: error.status,
+						headers: { Location: error.path.toString() },
+					});
+				} else {
+					throw error;
+				}
+			}
 		} else {
 			const [notFoundHandler, stash] = router.match('GET', '/404');
 			if (notFoundHandler.length) {

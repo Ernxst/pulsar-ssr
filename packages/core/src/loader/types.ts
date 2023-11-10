@@ -3,8 +3,6 @@ import type { cacheHeader } from 'pretty-cache-header';
 import type { QueryParams, UrlPath, inferPathParams } from 'src/types';
 import type { Runtime } from 'hono/adapter';
 
-export type RedirectStatus = 301 | 302 | 303 | 307 | 308;
-
 export type CacheOptions = Parameters<typeof cacheHeader>[0];
 
 export interface CookieHandler {
@@ -44,13 +42,6 @@ export interface LoaderFunctionArgs<
 	 */
 	readonly query: TQuery;
 	readonly cookies: CookieHandler;
-	// TODO: this should be an exported function so we can redirect in components
-	/**
-	 * Redirect to a new path. You can either throw or return this.
-	 * @param path The path to redirect to.
-	 * @param status The status code to use. Defaults to `302`.
-	 */
-	redirect(path: string | URL, status?: RedirectStatus): void;
 	/**
 	 * Set the response status code.
 	 */

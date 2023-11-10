@@ -75,11 +75,6 @@ export async function createRouteContext<
 			};
 		},
 
-		redirect(url, status = 302) {
-			resHeaders.set('Location', url.toString());
-			resStatus = status;
-		},
-
 		cache(options) {
 			const headers = cacheHeader(options);
 			resHeaders.append('Cache-Control', headers);

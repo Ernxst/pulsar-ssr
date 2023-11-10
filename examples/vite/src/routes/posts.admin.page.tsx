@@ -1,3 +1,4 @@
+import { redirect } from 'pulsar';
 import { type ActionFunctionArgs, useActionData } from 'pulsar/actions';
 
 const inputClassName =
@@ -60,7 +61,7 @@ export default function NewPost() {
 }
 
 export const actions = {
-	async default({ request, json, redirect, status }: ActionFunctionArgs) {
+	async default({ request, json, status }: ActionFunctionArgs) {
 		const formData = await request.formData();
 
 		const title = formData.get('title');

@@ -8,6 +8,7 @@ import {
 	PULSAR_FORM_ACTIONS_ENDPOINT,
 	PULSAR_FORM_ACTIONS_METHOD,
 } from 'src/utils/create-action-url';
+import { redirect } from 'pulsar';
 import type { HTTPMethod, ServerBuild } from './types';
 
 export interface RouteHandler {
@@ -21,6 +22,13 @@ export function createPulsarRouter({ routes }: ServerBuild) {
 	});
 
 	Object.entries(routes).forEach(([_sourceUrl, { endpoint, loadModule }]) => {
+		/**
+		 * ! When building, we could register the route + method ahead of time,
+		 * instead of a blanket route here, but I'd like to keep the differences
+		 * between the dev and prod builds as minimal as possible
+		 *
+		 * Maybe if someone asks for it, I can add this change
+		 */
 		router.add('ALL', endpoint, {
 			path: endpoint,
 			async handle(ctx) {
@@ -68,7 +76,7 @@ export function createPulsarRouter({ routes }: ServerBuild) {
 				}
 
 				// TODO: Throw 404 that is caught
-				return ctx.redirect('/404');
+				return redirect('/404');
 			},
 		});
 	});
@@ -80,7 +88,7 @@ export function createPulsarRouter({ routes }: ServerBuild) {
 			if (!filename) throw new Error('Missing filename path param');
 			if (!action) throw new Error('Missing form action path param');
 
-			const file = filename.startsWith("/") ? filename : `/${filename}`
+			const file = filename.startsWith('/') ? filename : `/${filename}`;
 			const module = routes[file];
 			if (!module) throw new Error(`Could not find module ${file}`);
 

@@ -4,11 +4,11 @@ import type { Plugin, ViteDevServer } from 'vite';
 import { transformPathToUrl } from '@pulsarjs/runtime';
 import type { Options } from './types';
 
-const PULSAR_DEV_PROTOCOL = 'ws:'
-const PULSAR_DEV_PORT = 8002
+const PULSAR_DEV_PROTOCOL = 'ws:';
+const PULSAR_DEV_PORT = 8002;
 
 function sendReload(vite: ViteDevServer, file: string, routesDir: string) {
-	const relative = file.split(routesDir)[1]
+	const relative = file.split(routesDir)[1];
 	const endpoint = transformPathToUrl(relative);
 	// @ts-expect-error it's fine
 	vite.ws.send({ type: 'RELOAD', path: file, endpoint });
@@ -24,7 +24,8 @@ export function pulsarDev({ routes, routesDir }: Options): Plugin {
 		config() {
 			return {
 				define: {
-					'process.env.PULSAR_HMR_PROTOCOL': JSON.stringify(PULSAR_DEV_PROTOCOL),
+					'process.env.PULSAR_HMR_PROTOCOL':
+						JSON.stringify(PULSAR_DEV_PROTOCOL),
 					'process.env.PULSAR_HMR_PORT': JSON.stringify(PULSAR_DEV_PORT),
 				},
 				server: {

@@ -31,7 +31,6 @@ export function createPulsarRouter({ routes }: ServerBuild) {
 		router.add('ALL', endpoint, {
 			path: endpoint,
 			async handle(ctx) {
-				// TODO: Disallow API routes in 404 page
 				const {
 					default: Page,
 					loader,
@@ -74,7 +73,7 @@ export function createPulsarRouter({ routes }: ServerBuild) {
 					return await handle(ctx);
 				}
 
-				return notFound(ctx.request.url)
+				return notFound(ctx.request.url);
 			},
 		});
 	});

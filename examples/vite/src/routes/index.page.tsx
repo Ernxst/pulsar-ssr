@@ -1,6 +1,6 @@
 import { type LoaderFunctionArgs, useLoaderData } from 'pulsar/loader';
 import type { RouteFunctionArgs } from 'pulsar/route';
-import Html, { LiveReload } from 'pulsar/components';
+import { LiveReload } from 'pulsar/components';
 import globalCssHref from '../global.css?url';
 import Button from '../components/Button';
 

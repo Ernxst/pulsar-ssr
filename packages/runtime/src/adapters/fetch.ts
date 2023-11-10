@@ -41,15 +41,14 @@ export function createFetchRequestHandler({
 	let router: Awaited<ReturnType<typeof createPulsarRouter>>;
 
 	return async function handleRequest(request) {
-		if (!router) {
-			// Wait for all routes to be loaded
-			router = await routerPromise;
-		}
-
 		const url = new URL(request.url);
+		const method = request.method.toUpperCase();
+		const query = url.search.length ? `?${url.search}` : '';
+		const endpoint = `${url.pathname}${query}`;
+
 		let response: Response;
 
-		const [handlers, stash] = router.match(request.method, url.pathname);
+		const [handlers, stash] = router.match(method, url.pathname);
 		if (handlers.length) {
 			response = await render(request, handlers[0], stash);
 		} else {
@@ -63,7 +62,7 @@ export function createFetchRequestHandler({
 			}
 		}
 
-		console.log(response.status, request.method.toUpperCase(), url.pathname);
+		console.log(response.status, method, endpoint);
 		/** HEAD requests have no body, as per the spec */
 		if (request.method === 'HEAD') {
 			return new Response(null, {

@@ -2,7 +2,7 @@ import type { Actions } from 'pulsar/actions';
 import type { LoaderFunction } from 'pulsar/loader';
 import type { RouteFunction } from 'pulsar/route';
 
-type HTTPMethod =
+export type HTTPMethod =
 	| 'DELETE'
 	| 'GET'
 	| 'HEAD'
@@ -37,7 +37,9 @@ export type PulsarModule = {
 	/**
 	 * page component
 	 */
-	default?: () => any;
+	default?: PulsarPage;
 };
+
+export type PulsarPage = () => any;
 
 export type ModuleLoader = (filePath: string) => Promise<PulsarModule>;

@@ -1,5 +1,5 @@
-import { transformPathToUrl } from '@pulsarjs/runtime';
 import type MagicString from 'magic-string';
+import { PULSAR_FORM_ACTIONS_METHOD } from '@pulsarjs/runtime';
 import { getElementProps } from '../utils';
 
 function findFormPropDefinition(opts: {
@@ -24,7 +24,6 @@ export function transformFormAction(
 		'import { createActionUrl } from "@pulsarjs/runtime";\n'
 	);
 
-	const endpoint = transformPathToUrl(relativeFilePath);
 	const formProps = getElementProps('form', code, [
 		'formaction',
 		'action',
@@ -52,9 +51,9 @@ export function transformFormAction(
 
 			if (method) {
 				// We only register POST routes for form actions in the runtime, so replace it here
-				if (method.toUpperCase() !== 'POST') {
+				if (method.toUpperCase() !== PULSAR_FORM_ACTIONS_METHOD) {
 					console.warn(
-						`Found a form in ${relativeFilePath} that uses formaction="${formaction}" and method="${method}". The method "${method}" will be replaced with POST.`
+						`Found a form in ${relativeFilePath} that uses formaction="${formaction}" and method="${method}". The method "${method}" will be replaced with ${PULSAR_FORM_ACTIONS_METHOD}.`
 					);
 
 					const [start, end] = findFormPropDefinition({
@@ -63,7 +62,7 @@ export function transformFormAction(
 						prop: 'method',
 						value: method,
 					});
-					string.overwrite(start, end, 'method: "POST"');
+					string.overwrite(start, end, `method: "${PULSAR_FORM_ACTIONS_METHOD}"`);
 				}
 			}
 
@@ -101,8 +100,8 @@ export function transformFormAction(
 			string.overwrite(
 				start,
 				end,
-				`action: createActionUrl("${absoluteFilePath}", "${formaction}")
-					${method ? '' : ', method: "POST"'}
+				`action: createActionUrl("${relativeFilePath}", "${formaction}")
+					${method ? '' : `, method: "${PULSAR_FORM_ACTIONS_METHOD}"`}
 					`
 			);
 		}

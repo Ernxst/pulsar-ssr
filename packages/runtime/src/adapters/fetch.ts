@@ -37,8 +37,7 @@ export function createFetchRequestHandler({
 }: {
 	build: ServerBuild;
 }): FetchHandler {
-	const routerPromise = createPulsarRouter(build);
-	let router: Awaited<ReturnType<typeof createPulsarRouter>>;
+	const router = createPulsarRouter(build);
 
 	return async function handleRequest(request) {
 		const url = new URL(request.url);

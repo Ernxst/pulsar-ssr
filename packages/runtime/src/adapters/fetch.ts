@@ -43,8 +43,7 @@ export function createFetchRequestHandler({
 	return async function handleRequest(request) {
 		const url = new URL(request.url);
 		const method = request.method.toUpperCase();
-		const query = url.search.length ? `?${url.search}` : '';
-		const endpoint = `${url.pathname}${query}`;
+		const endpoint = `${url.pathname}${url.search}`;
 
 		let response: Response;
 

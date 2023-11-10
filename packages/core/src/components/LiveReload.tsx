@@ -34,7 +34,7 @@ function liveReloadConnect(config?: { onOpen: () => any }) {
 	ws.onmessage = (message) => {
 		const event = JSON.parse(message.data) as Message;
 		if (event.type === 'connected') {
-			console.debug('[vite] connected.')
+			console.debug('[vite] connected.');
 		} else if (event.type === 'LOG') {
 			console.log(event.message);
 		} else if (event.type === 'RELOAD') {

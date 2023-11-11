@@ -1,4 +1,4 @@
 export { actionDataSymbol, loaderDataSymbol, ROUTE_PATTERN } from './constants';
 export { createRouteContext } from './create-route-context';
-export { Redirect, isRedirect } from 'src/utils/redirect';
+export { isRedirect } from 'src/utils/redirect';
 export { notFound, isNotFound } from './not-found';

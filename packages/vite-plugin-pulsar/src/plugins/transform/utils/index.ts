@@ -1,5 +1,13 @@
 import type MagicString from 'magic-string';
 import type JSX from 'pulsar/components';
+import esquery from 'esquery';
+import babel from '@babel/parser';
+import type {
+	CallExpression,
+	Node,
+	ObjectExpression,
+	Program,
+} from '@babel/types';
 
 /**
  * Replace all occurrences of a pattern in a {@linkcode MagicString}
@@ -30,6 +38,32 @@ export function replaceAll({
 	return string;
 }
 
+function parse(code: string): Program {
+	const result = babel.parse(code, {
+		sourceType: 'module',
+		plugins: [
+			'estree',
+			'optionalChaining',
+			'importAttributes',
+			'importMeta',
+			'dynamicImport',
+			'jsx',
+			'topLevelAwait',
+			'classPrivateMethods',
+		],
+	});
+	return result.program;
+}
+
+function match<T extends Node = Node>(
+	node: Program,
+	selector: string
+): Array<T> {
+	const sel = esquery.parse(selector);
+	return esquery.match(node as any, sel) as unknown as Array<T>;
+}
+
+// This is after the JSX has been transformed, so everything will in object syntax
 export function getElementProps<
 	const TElement extends keyof JSX.IntrinsicElements,
 	const TProps extends string & keyof JSX.IntrinsicElements[TElement],
@@ -37,43 +71,41 @@ export function getElementProps<
 	element: TElement,
 	code: string,
 	propsToExtract: TProps[]
-): Record<TProps, string | null>[] {
-	// This is after the JSX has been transformed, so everything will in object syntax
-	const regexString = `Html.createElement\\("(?<element>${element})", (?<props>\{.*?\})`;
-	const regex = new RegExp(regexString, 'g');
-	return getObject(code, regex, propsToExtract);
+): Partial<Pick<JSX.IntrinsicElements[TElement], TProps>>[] {
+	const createElementQuery = makeCreateElementQuery(element);
+	const propQuery = makeElementPropQuery(propsToExtract);
+
+	const root = parse(code);
+	const usages = match<CallExpression>(root, createElementQuery);
+
+	return usages.map((node) => {
+		const nodeCode = code.slice(node.start!, node.end!);
+		const ast = parse(nodeCode);
+		// A Html.createElement expression should only have one props object
+		const [objNode] = match<ObjectExpression>(ast, propQuery);
+
+		const props: any = {};
+
+		for (const propNode of objNode.properties) {
+			const { key, value } = propNode as any;
+			props[key.name] = value.value;
+		}
+
+		return props;
+	});
 }
 
-/**
- * @param code
- * @param regex Must be a {@linkcode Regex} which a named capture group `props`
- * @param propsToExtract
- */
-export function getObject<const TProps extends string>(
-	code: string,
-	regex: RegExp,
-	propsToExtract: TProps[]
-): Record<TProps, string | null>[] {
-	return [...code.matchAll(regex)].map((match) => {
-		const { props } = match.groups!;
-		return Object.fromEntries(
-			propsToExtract.map((prop) => {
-				return [prop, getProp(props, prop)];
-			})
-		);
-	}) as any;
+function makeCreateElementQuery(element: string) {
+	const htmlQuery = `MemberExpression:has(Identifier[name=Html]):has(Identifier[name=createElement])`;
+	const elQuery = `Literal[value=${element}]`;
+
+	return `CallExpression:has(${htmlQuery}):has(${elQuery})`;
 }
 
-function getProp(objectString: string, propName: string) {
-	// Create a regular expression pattern to match the property and its value
-	const regex = new RegExp(`\\s${propName}:\\s*"([^"]+)"`, 'i');
-
-	// Use the regular expression to extract the property value
-	const match = objectString.match(regex);
-
-	if (match) {
-		return match[1]; // The property value is captured in the first capture group
-	} else {
-		return null;
-	}
+function makeElementPropQuery(props: string[]) {
+	return props
+		.map(
+			(prop) => `ObjectExpression:has(Property:has(Identifier[name=${prop}]))`
+		)
+		.join(', ');
 }

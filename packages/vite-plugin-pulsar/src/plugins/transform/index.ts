@@ -5,6 +5,7 @@ import type { Options } from '../types';
 import { transformActionData } from './actions/transform-actions-data';
 import { transformFormAction } from './actions/transform-form-action';
 import { transformLoaderData } from './actions/transform-loader-data';
+import { parse } from './utils/ast';
 
 /**
  * Plugin to apply any transforms to the components
@@ -34,7 +35,8 @@ export function pulsarTransform({ routesDir }: Options): Plugin {
 
 				string = transformLoaderData(code, string);
 				string = transformActionData(code, string);
-				string = transformFormAction(relativeFilePath, code, string);
+				const ast = parse(code);
+				string = transformFormAction({ ast, relativeFilePath, code, string });
 
 				return { code: string.toString(), map: string.generateMap() };
 			}

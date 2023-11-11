@@ -1,13 +1,7 @@
-import type MagicString from 'magic-string';
 import type JSX from 'pulsar/components';
-import esquery from 'esquery';
-import babel from '@babel/parser';
-import type {
-	CallExpression,
-	Node,
-	ObjectExpression,
-	Program,
-} from '@babel/types';
+import type { CallExpression, ObjectExpression } from '@babel/types';
+import type MagicString from 'magic-string';
+import { match, parse } from './ast';
 
 /**
  * Replace all occurrences of a pattern in a {@linkcode MagicString}
@@ -36,31 +30,6 @@ export function replaceAll({
 	}
 
 	return string;
-}
-
-function parse(code: string): Program {
-	const result = babel.parse(code, {
-		sourceType: 'module',
-		plugins: [
-			'estree',
-			'optionalChaining',
-			'importAttributes',
-			'importMeta',
-			'dynamicImport',
-			'jsx',
-			'topLevelAwait',
-			'classPrivateMethods',
-		],
-	});
-	return result.program;
-}
-
-function match<T extends Node = Node>(
-	node: Program,
-	selector: string
-): Array<T> {
-	const sel = esquery.parse(selector);
-	return esquery.match(node as any, sel) as unknown as Array<T>;
 }
 
 // This is after the JSX has been transformed, so everything will in object syntax

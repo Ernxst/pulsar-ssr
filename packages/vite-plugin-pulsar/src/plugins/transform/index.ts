@@ -2,9 +2,8 @@ import MagicString from 'magic-string';
 import { matches } from 'src/utils/matches';
 import type { Plugin } from 'vite';
 import type { Options } from '../types';
-import { transformActionData } from './actions/transform-actions-data';
-import { transformFormAction } from './actions/transform-form-action';
-import { transformLoaderData } from './actions/transform-loader-data';
+import { transformFormAction } from './actions';
+import { transformLoaderData } from './transform-loader-data';
 import { parse } from './utils/ast';
 
 /**
@@ -33,9 +32,8 @@ export function pulsarTransform({ routesDir }: Options): Plugin {
 				// Use magic string so our transformations don't break the source map
 				let string = new MagicString(code);
 
-				string = transformLoaderData(code, string);
-				string = transformActionData(code, string);
 				const ast = parse(code);
+				string = transformLoaderData(code, string);
 				string = transformFormAction({ ast, relativeFilePath, code, string });
 
 				return { code: string.toString(), map: string.generateMap() };

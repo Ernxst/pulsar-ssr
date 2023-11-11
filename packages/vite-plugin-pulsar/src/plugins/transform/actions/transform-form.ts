@@ -1,8 +1,7 @@
-import type MagicString from 'magic-string';
-import { PULSAR_FORM_ACTIONS_METHOD } from '@pulsarjs/runtime';
-import type { Program } from '@babel/types';
+import { PULSAR_FORM_ACTIONS_METHOD, createActionUrl } from '@pulsarjs/runtime';
 import { getElementProps } from '../utils';
-import { validateFormActions } from './validate-form-actions';
+import type { ActionOptions } from './types';
+import { validateFormActions } from './validate';
 
 function findFormPropDefinition(opts: {
 	formIndex: number;
@@ -16,16 +15,15 @@ function findFormPropDefinition(opts: {
 	return [start, start + target.length];
 }
 
-export function transformFormAction(opts: {
-	relativeFilePath: string;
-	ast: Program;
-	code: string;
-	string: MagicString;
-}) {
-	const { string, relativeFilePath, code, ast } = opts;
-
-	// Add the import so it is transpiled by Vite
-	string.prepend('import { createActionUrl } from "@pulsarjs/runtime";\n');
+/**
+ * Transform the form actions by changing the `formaction` prop
+ * to a generated endpoint
+ *
+ * This will also change all the methods of named action forms to
+ * {@linkcode PULSAR_FORM_ACTIONS_METHOD}
+ */
+export function transformForm(options: ActionOptions) {
+	const { string, code, relativeFilePath } = options;
 
 	const formProps = getElementProps('form', code, [
 		'formaction',
@@ -37,6 +35,8 @@ export function transformFormAction(opts: {
 		const { formaction, action, method } = props;
 
 		if (formaction) {
+			validateFormActions({ ...options, formaction });
+
 			// Action and form action is not allowed
 			if (action) {
 				console.warn(
@@ -73,8 +73,6 @@ export function transformFormAction(opts: {
 				}
 			}
 
-			validateFormActions({ ast, code, relativeFilePath, formaction });
-
 			const [start, end] = findFormPropDefinition({
 				formIndex,
 				code,
@@ -82,15 +80,14 @@ export function transformFormAction(opts: {
 				value: formaction,
 			});
 
+			const actionEndpoint = createActionUrl(relativeFilePath, formaction);
 			string.overwrite(
 				start,
 				end,
-				`action: createActionUrl("${relativeFilePath}", "${formaction}")
+				`action: "${actionEndpoint}"
 					${method ? '' : `, method: "${PULSAR_FORM_ACTIONS_METHOD}"`}
 					`
 			);
 		}
 	});
-
-	return string;
 }

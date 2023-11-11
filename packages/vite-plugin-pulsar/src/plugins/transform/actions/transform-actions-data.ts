@@ -21,10 +21,10 @@ export function transformActionData({
 			const unknownActions = nodes
 				.flatMap((node) => {
 					const subAst = parse(code.slice(node.start!, node.end!));
-					return match<StringLiteral>(subAst, 'Literal')
+					return match<StringLiteral>(subAst, 'Literal');
 				})
 				.filter((literal) => !actions.namedActions.has(literal.value))
-				.map((action) => `"${action.value}"`)
+				.map((action) => `"${action.value}"`);
 
 			if (unknownActions.length) {
 				throw new Error(

@@ -10,7 +10,7 @@ export default function NewPost() {
 
 	return (
 		<>
-		<LiveReload />
+			<LiveReload />
 			<form formaction="default">
 				<p>
 					<label>

@@ -14,5 +14,8 @@ export function useActionData<
 	// This will be set through function binding at build-time
 	// @ts-expect-error it's fine
 	// eslint-disable-next-line @typescript-eslint/no-invalid-this
-	return this[actionDataSymbol][action];
+	const actionData = this[actionDataSymbol]
+	if (actionData) return actionData[action];
+
+	return undefined as any;
 }

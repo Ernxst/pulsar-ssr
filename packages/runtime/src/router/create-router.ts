@@ -40,12 +40,14 @@ export function createPulsarRouter({ routes }: ServerBuild) {
 
 				const method = ctx.request.method.toUpperCase() as HTTPMethod;
 
+				// TODO: This needs to happen at compile time
 				if (handlers.GET && Page) {
 					throw new Error(
 						'Cannot have a GET route and a page in the same route'
 					);
 				}
 
+				// TODO: This needs to happen at compile time
 				if (loader && !Page) {
 					console.warn(
 						'You have defined a loader, but do not have a page - the loader will be stripped from the server bundle.'
@@ -96,6 +98,7 @@ export function createPulsarRouter({ routes }: ServerBuild) {
 				throw new Error(`Unknown form action "${action}" for file ${file}`);
 
 			const actionData = await handler(context);
+			(Page as any)[actionDataSymbol] ??= {};
 			// Bind it so any useActionData usages are also bound
 			(Page as any)[actionDataSymbol][action] = actionData;
 		},

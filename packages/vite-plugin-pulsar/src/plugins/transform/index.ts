@@ -33,7 +33,7 @@ export function pulsarTransform({ routesDir }: Options): Plugin {
 				let string = new MagicString(code);
 
 				const ast = parse(code);
-				string = transformLoaderData(code, string);
+				string = transformLoaderData({ ast, relativeFilePath, code, string });
 				string = transformFormAction({ ast, relativeFilePath, code, string });
 
 				return { code: string.toString(), map: string.generateMap() };

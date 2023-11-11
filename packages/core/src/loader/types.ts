@@ -66,7 +66,10 @@ export interface LoaderFunctionArgs<
 	/**
 	 * Sets the response body and content type to `application/json;charset=utf-8`
 	 */
-	json<const TBody extends object>(body: TBody, options?: { status?: number }): TBody;
+	json<const TBody extends object>(
+		body: TBody,
+		options?: { status?: number }
+	): TBody;
 	/**
 	 * Sets the response body and content type to `text/html;charset=utf-8`
 	 */
@@ -74,11 +77,17 @@ export interface LoaderFunctionArgs<
 	/**
 	 * Sets the response body and content type to `text/plain`
 	 */
-	text<const TString extends string>(body: TString, options?: { status?: number }): TString;
+	text<const TString extends string>(
+		body: TString,
+		options?: { status?: number }
+	): TString;
 	/**
 	 * Sets the response body and content type to `application/xml`
 	 */
-	xml<TString extends string>(body: TString, options?: { status?: number }): TString;
+	xml<TString extends string>(
+		body: TString,
+		options?: { status?: number }
+	): TString;
 }
 
 export type LoaderFunction<

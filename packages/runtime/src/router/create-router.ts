@@ -97,7 +97,7 @@ export function createPulsarRouter({ routes }: ServerBuild) {
 
 			const actionData = await handler(context);
 			// Bind it so any useActionData usages are also bound
-			(Page as any)[actionDataSymbol] = actionData;
+			(Page as any)[actionDataSymbol][action] = actionData;
 		},
 	});
 

@@ -9,10 +9,10 @@ export type {
 } from './types';
 
 export function useActionData<
-	TAction extends ActionFunction<any, any, any, any>,
->(): Awaited<inferActionOutput<TAction>> {
+	TActions extends Record<string, ActionFunction<any, any, any, any>>,
+>(action: keyof TActions): Awaited<inferActionOutput<TActions[typeof action]>> {
 	// This will be set through function binding at build-time
 	// @ts-expect-error it's fine
 	// eslint-disable-next-line @typescript-eslint/no-invalid-this
-	return this[actionDataSymbol];
+	return this[actionDataSymbol][action];
 }

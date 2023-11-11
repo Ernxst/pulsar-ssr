@@ -61,7 +61,7 @@ export default function NewPost() {
 }
 
 export const actions = {
-	async default({ request, json, status }: ActionFunctionArgs) {
+	async default({ request, json }: ActionFunctionArgs) {
 		const formData = await request.formData();
 
 		const title = formData.get('title');
@@ -76,9 +76,8 @@ export const actions = {
 
 		const hasErrors = Object.values(errors).some(Boolean);
 		if (hasErrors) {
-			status(400);
 			// TODO: Fix this is redirecting to the new route - (some native HTML issue)
-			return json(errors);
+			return json(errors, { status: 400 });
 		}
 
 		// await createPost({ title, slug, markdown });

@@ -1,4 +1,4 @@
-import { SmartRouter } from 'hono/router/smart-router';
+import type { SmartRouter } from 'hono/router/smart-router';
 import { createRouteContext, isNotFound, isRedirect } from 'pulsar/internal';
 import { createResponse } from 'src/router/create-response';
 import type { RouteHandler } from 'src/router/create-router';

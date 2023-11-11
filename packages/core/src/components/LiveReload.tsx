@@ -1,6 +1,5 @@
 /// <reference lib="dom" />
 /// <reference lib="dom.iterable" />
-import Html from '@kitajs/html';
 
 interface LogMessage {
 	type: 'LOG';

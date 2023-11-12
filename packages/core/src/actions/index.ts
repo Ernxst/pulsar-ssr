@@ -1,10 +1,10 @@
-import { actionDataSymbol } from 'src/internal/constants';
+import { getActionData } from 'src/internal/utils/data';
 import type { ActionFunction, inferActionOutput } from './types';
 
 export type {
-	Actions,
 	ActionFunction,
 	ActionFunctionArgs,
+	Actions,
 	inferActionOutput,
 } from './types';
 
@@ -14,8 +14,5 @@ export function useActionData<
 	// This will be set through function binding at build-time
 	// @ts-expect-error it's fine
 	// eslint-disable-next-line @typescript-eslint/no-invalid-this
-	const actionData = this[actionDataSymbol];
-	if (actionData) return actionData[action];
-
-	return undefined as any;
+	return getActionData.bind(this)(this, action);
 }

@@ -1,4 +1,4 @@
-import { transformPathToUrl } from '@pulsarjs/runtime';
+import { transformPathToUrl } from 'pulsar/internal';
 import type { Adapter } from 'src/adapters/types';
 
 interface Options {

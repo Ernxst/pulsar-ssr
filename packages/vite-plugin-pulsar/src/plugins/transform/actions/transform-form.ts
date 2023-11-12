@@ -1,4 +1,4 @@
-import { PULSAR_FORM_ACTIONS_METHOD, createActionUrl } from '@pulsarjs/runtime';
+import { PULSAR_FORM_ACTIONS_METHOD, createActionUrl } from 'pulsar/internal';
 import { getElementProps } from '../utils';
 import type { ActionOptions } from './types';
 import { validateFormActions } from './validate';

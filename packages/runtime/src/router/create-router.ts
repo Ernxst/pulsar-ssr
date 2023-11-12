@@ -2,12 +2,14 @@ import { RegExpRouter } from 'hono/router/reg-exp-router';
 import { SmartRouter } from 'hono/router/smart-router';
 import { TrieRouter } from 'hono/router/trie-router';
 import type { RouteFunctionArgs } from 'pulsar/route';
-import { actionDataSymbol, loaderDataSymbol, notFound } from 'pulsar/internal';
 import Html from 'pulsar/components';
 import {
 	PULSAR_FORM_ACTIONS_ENDPOINT,
 	PULSAR_FORM_ACTIONS_METHOD,
-} from 'src/utils/create-action-url';
+	setActionData,
+	setLoaderData,
+} from 'pulsar/internal';
+import { notFound } from 'src/utils/not-found';
 import type { HTTPMethod, ServerBuild } from './types';
 
 export interface RouteHandler {
@@ -65,7 +67,7 @@ export function createPulsarRouter({ routes }: ServerBuild) {
 					}
 
 					// Bind it so any useLoaderData usages are also bound
-					(Page as any)[loaderDataSymbol] = loaderData;
+					setLoaderData(Page, loaderData);
 					(globalThis as any)['Html'] = Html;
 
 					const result = await Page.bind(Page)();
@@ -100,9 +102,15 @@ export function createPulsarRouter({ routes }: ServerBuild) {
 				throw new Error(`Unknown form action "${action}" for file ${file}`);
 
 			const actionData = await handler(context);
-			(Page as any)[actionDataSymbol] ??= {};
-			// Bind it so any useActionData usages are also bound
-			(Page as any)[actionDataSymbol][action] = actionData;
+			/**
+			 * We allow actions without a page in case other pages/routes want to
+			 * call these actions
+			 */
+			if (Page) {
+				setActionData(Page, action, actionData);
+			}
+
+			return actionData;
 		},
 	});
 

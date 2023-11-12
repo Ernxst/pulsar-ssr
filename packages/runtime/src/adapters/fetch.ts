@@ -1,9 +1,10 @@
 import type { SmartRouter } from 'hono/router/smart-router';
-import { createRouteContext, isNotFound, isRedirect } from 'pulsar/internal';
+import { createRouteContext, isRedirect } from 'pulsar/internal';
 import { createResponse } from 'src/router/create-response';
 import type { RouteHandler } from 'src/router/create-router';
 import { createPulsarRouter } from 'src/router/create-router';
 import type { ServerBuild } from 'src/router/types';
+import { isNotFound } from 'src/utils/not-found';
 
 type FetchHandler = (request: Request) => Promise<Response>;
 
@@ -26,6 +27,14 @@ async function render(
 
 	const context = await createRouteContext({ request, path, params });
 	const responseBody = await handle(context);
+
+	if (isRedirect(responseBody)) {
+		return new Response(null, {
+			status: responseBody.status,
+			headers: { Location: responseBody.path.toString() },
+		});
+	}
+
 	const { status, headers } = context.response;
 	return createResponse(responseBody, {
 		headers,

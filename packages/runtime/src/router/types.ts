@@ -20,15 +20,6 @@ export interface ServerBuild {
 	>;
 }
 
-export interface ServerBuildConfig {
-	/**
-	 * For every route found, also register
-	 */
-	addHtmlRoutes: boolean;
-	addIndexRoutes: boolean;
-	addIndexHtmlRoutes: boolean;
-}
-
 export type PulsarModule = {
 	[K in HTTPMethod]?: RouteFunction<any, any, any, any>;
 } & {
@@ -37,9 +28,5 @@ export type PulsarModule = {
 	/**
 	 * page component
 	 */
-	default?: PulsarPage;
+	default?: () => any;
 };
-
-export type PulsarPage = () => any;
-
-export type ModuleLoader = (filePath: string) => Promise<PulsarModule>;

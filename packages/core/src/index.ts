@@ -1,4 +1,4 @@
-export type { UrlPath, QueryParams, inferPathParams } from './types';
+export type { QueryParams, UrlPath, inferPathParams } from './types';
 
 export type {
 	CacheOptions,
@@ -8,4 +8,4 @@ export type {
 
 export type { Runtime } from 'hono/adapter';
 
-export { redirect, type RedirectStatus } from 'src/utils/redirect';
+export { redirect, type RedirectStatus } from 'src/internal/utils/redirect';

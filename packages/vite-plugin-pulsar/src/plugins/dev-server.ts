@@ -1,7 +1,7 @@
 import { createHttpRequestHandler } from '@pulsarjs/runtime/adapters';
 import { matches } from 'src/utils/matches';
 import type { Plugin, ViteDevServer } from 'vite';
-import { transformPathToUrl } from '@pulsarjs/runtime';
+import { transformPathToUrl } from 'pulsar/internal';
 import type { Options } from './types';
 
 const PULSAR_DEV_PROTOCOL = 'ws:';

@@ -1,4 +1,4 @@
-import { loaderDataSymbol } from 'src/internal/constants';
+import { getLoaderData } from 'src/internal/utils/data';
 import type { LoaderFunction, inferLoaderData } from './types';
 
 export type {
@@ -10,8 +10,7 @@ export type {
 export function useLoaderData<
 	TLoader extends LoaderFunction<any, any, any>,
 >(): inferLoaderData<TLoader> {
-	// This will be set through function binding at build-time
 	// @ts-expect-error it's fine
 	// eslint-disable-next-line @typescript-eslint/no-invalid-this
-	return this[loaderDataSymbol];
+	return getLoaderData.bind(this)(this);
 }

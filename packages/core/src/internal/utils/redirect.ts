@@ -13,9 +13,12 @@ class Redirect {
  * @param status The status code to use. Defaults to `302`.
  */
 export function redirect(path: string | URL, status: RedirectStatus = 302) {
-	throw new Redirect(path, status);
+	return new Redirect(path, status);
 }
 
+/**
+ * `instanceof` checks don't seem to work - this will
+ */
 export function isRedirect(obj: unknown): obj is Redirect {
 	// @ts-expect-error what?
 	return (

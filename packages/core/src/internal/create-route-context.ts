@@ -18,6 +18,10 @@ interface Options {
 	params: Record<string, string>;
 }
 
+/**
+ * Create the context that is passed to routes (loaders and actions).
+ * @internal
+ */
 export async function createRouteContext<
 	TPath extends UrlPath,
 	TQuery extends QueryParams,

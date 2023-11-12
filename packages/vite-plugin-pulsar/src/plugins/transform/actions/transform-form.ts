@@ -1,4 +1,10 @@
-import { PULSAR_FORM_ACTIONS_METHOD, createActionUrl } from 'pulsar/internal';
+import {
+	FormactionAndActionWarning,
+	FormactionAndUnsupportedMethodWarning,
+	PULSAR_FORM_ACTIONS_METHOD,
+	createActionUrl,
+	warnToConsole,
+} from 'pulsar/internal';
 import { getElementProps } from '../utils';
 import type { ActionOptions } from './types';
 import { validateFormActions } from './validate';
@@ -39,9 +45,12 @@ export function transformForm(options: ActionOptions) {
 
 			// Action and form action is not allowed
 			if (action) {
-				console.warn(
-					`Found a form in ${relativeFilePath} that uses formaction="${formaction}" and action="${action}". The action="${action}" will be removed.`
-				);
+				const warning = FormactionAndActionWarning({
+					filePath: relativeFilePath,
+					formaction,
+					action,
+				});
+				warnToConsole(warning);
 
 				const [start, end] = findFormPropDefinition({
 					formIndex,
@@ -55,9 +64,12 @@ export function transformForm(options: ActionOptions) {
 			if (method) {
 				// We only register POST routes for form actions in the runtime, so replace it here
 				if (method.toUpperCase() !== PULSAR_FORM_ACTIONS_METHOD) {
-					console.warn(
-						`Found a form in ${relativeFilePath} that uses formaction="${formaction}" and method="${method}". The method "${method}" will be replaced with ${PULSAR_FORM_ACTIONS_METHOD}.`
-					);
+					const warning = FormactionAndUnsupportedMethodWarning({
+						filePath: relativeFilePath,
+						formaction,
+						method,
+					});
+					warnToConsole(warning);
 
 					const [start, end] = findFormPropDefinition({
 						formIndex,

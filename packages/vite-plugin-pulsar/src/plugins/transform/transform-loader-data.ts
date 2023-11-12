@@ -1,5 +1,10 @@
 import type MagicString from 'magic-string';
 import type { Program } from '@babel/types';
+import {
+	LoaderWithoutPageWarning,
+	UnusedLoaderWarning,
+	warnToConsole,
+} from 'pulsar/internal';
 import { bindFunctionUsage } from './utils/bind-function';
 import { match } from './utils/ast';
 
@@ -32,9 +37,8 @@ export function transformLoaderData({
 	if (loader) {
 		const [page] = match(ast, EXPORTED_PAGE_QUERY);
 		if (!page) {
-			console.warn(
-				`Found a loader in ${relativeFilePath} without a default-exported page.`
-			);
+			const warning = LoaderWithoutPageWarning({ filePath: relativeFilePath });
+			warnToConsole(warning);
 		}
 	}
 
@@ -52,7 +56,8 @@ export function transformLoaderData({
 			}
 		}
 	} else if (!loader) {
-		console.warn(`Unused loader in ${relativeFilePath}`);
+		const warning = UnusedLoaderWarning({ filePath: relativeFilePath });
+		warnToConsole(warning);
 	}
 
 	return bindFunctionUsage(code, string, 'useLoaderData');

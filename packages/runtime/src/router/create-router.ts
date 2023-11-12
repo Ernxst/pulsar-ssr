@@ -43,17 +43,16 @@ export function createPulsarRouter({ routes }: ServerBuild) {
 				const method = ctx.request.method.toUpperCase() as HTTPMethod;
 
 				if (Page && method === 'GET') {
-					let loaderData;
-
-					// Loader is executed with the page, not on a separate route
 					if (loader) {
-						loaderData = await loader(ctx);
+						// Loader is executed with the page, not on a separate route
+						const loaderData = await loader(ctx);
+						// No reason to set if there wasn't a loader - compiler already
+						// catches invalid usages of useLoaderData
+						setLoaderData(Page, loaderData);
 					}
 
-					// Bind it so any useLoaderData usages are also bound
-					setLoaderData(Page, loaderData);
+					// In case the consumer did not import Html from pulsar
 					(globalThis as any)['Html'] = Html;
-
 					const result = await Page.bind(Page)();
 					return ctx.html(result);
 				}

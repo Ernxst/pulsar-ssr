@@ -13,6 +13,8 @@ const EXPORTED_LOADER_QUERY =
 const LOCAL_LOADER_QUERY =
 	'VariableDeclaration:has(Identifier[name=loader]):has(ArrowFunctionExpression), FunctionDeclaration:has(Identifier[name=loader])';
 
+const EXPORTED_PAGE_QUERY = 'ExportDefaultDeclaration';
+
 export function transformLoaderData({
 	ast,
 	code,
@@ -26,17 +28,31 @@ export function transformLoaderData({
 }) {
 	const [loader] = match(ast, EXPORTED_LOADER_QUERY);
 	const nodes = match(ast, USE_LOADER_QUERY);
-	if (nodes.length && !loader) {
-		const nonExportedLoader = match(ast, LOCAL_LOADER_QUERY);
-		if (nonExportedLoader) {
-			throw new Error(
-				`You are trying to call useLoaderData in ${relativeFilePath} but have not exported the loader function.`
-			);
-		} else {
-			throw new Error(
-				`You cannot call useLoaderData without exporting a loader function in ${relativeFilePath}`
+
+	if (loader) {
+		const [page] = match(ast, EXPORTED_PAGE_QUERY);
+		if (!page) {
+			console.warn(
+				`Found a loader in ${relativeFilePath} without a default-exported page.`
 			);
 		}
+	}
+
+	if (nodes.length) {
+		if (!loader) {
+			const [nonExportedLoader] = match(ast, LOCAL_LOADER_QUERY);
+			if (nonExportedLoader) {
+				throw new Error(
+					`You are trying to call useLoaderData in ${relativeFilePath} but have not exported the loader function.`
+				);
+			} else {
+				throw new Error(
+					`You cannot call useLoaderData without exporting a loader function in ${relativeFilePath}`
+				);
+			}
+		}
+	} else if (!loader) {
+		console.warn(`Unused loader in ${relativeFilePath}`);
 	}
 
 	return bindFunctionUsage(code, string, 'useLoaderData');

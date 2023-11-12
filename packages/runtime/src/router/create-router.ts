@@ -49,15 +49,6 @@ export function createPulsarRouter({ routes }: ServerBuild) {
 					);
 				}
 
-				// TODO: This needs to happen at compile time
-				if (process.env.NODE_ENV === 'development') {
-					if (loader && !Page) {
-						console.warn(
-							'You have defined a loader, but do not have a page - the loader will be stripped from the production bundle.'
-						);
-					}
-				}
-
 				if (Page && method === 'GET') {
 					let loaderData;
 

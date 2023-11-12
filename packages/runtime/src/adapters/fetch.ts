@@ -63,7 +63,6 @@ export function createFetchRequestHandler({
 	return async function handleRequest(request) {
 		const url = new URL(request.url);
 		const method = request.method.toUpperCase();
-		const endpoint = `${url.pathname}${url.search}`;
 
 		let response: Response;
 
@@ -87,7 +86,9 @@ export function createFetchRequestHandler({
 			response = await handleNotFound(router, url);
 		}
 
+		const endpoint = `${url.pathname}${url.search}`;
 		console.log(response.status, method, endpoint);
+
 		/** HEAD requests have no body, as per the spec */
 		if (request.method === 'HEAD') {
 			return new Response(null, {

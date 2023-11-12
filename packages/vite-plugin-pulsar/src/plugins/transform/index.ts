@@ -2,6 +2,7 @@ import MagicString from 'magic-string';
 import { matches } from 'src/utils/matches';
 import type { Plugin } from 'vite';
 import type { Options } from '../types';
+import { validateModule } from '../validate';
 import { transformFormAction } from './actions';
 import { transformLoaderData } from './transform-loader-data';
 import { parse } from './utils/ast';
@@ -33,6 +34,8 @@ export function pulsarTransform({ routesDir }: Options): Plugin {
 				let string = new MagicString(code);
 
 				const ast = parse(code);
+				validateModule({ ast, relativeFilePath });
+
 				string = transformLoaderData({ ast, relativeFilePath, code, string });
 				string = transformFormAction({ ast, relativeFilePath, code, string });
 

@@ -42,13 +42,6 @@ export function createPulsarRouter({ routes }: ServerBuild) {
 
 				const method = ctx.request.method.toUpperCase() as HTTPMethod;
 
-				// TODO: This needs to happen at compile time
-				if (handlers.GET && Page) {
-					throw new Error(
-						'Cannot have a GET route and a page in the same route'
-					);
-				}
-
 				if (Page && method === 'GET') {
 					let loaderData;
 

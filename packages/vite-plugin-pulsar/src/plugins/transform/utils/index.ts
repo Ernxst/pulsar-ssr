@@ -46,8 +46,6 @@ export function getElementProps<
 	const root = parse(code);
 	const usages = match<CallExpression>(root, createElementQuery);
 
-	console.log(code);
-
 	return usages.map((node) => {
 		const nodeCode = code.slice(node.start!, node.end!);
 		const ast = parse(nodeCode);

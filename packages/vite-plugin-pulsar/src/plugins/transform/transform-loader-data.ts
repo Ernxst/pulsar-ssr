@@ -55,7 +55,7 @@ export function transformLoaderData({
 				);
 			}
 		}
-	} else if (!loader) {
+	} else if (loader) {
 		const warning = UnusedLoaderWarning({ filePath: relativeFilePath });
 		warnToConsole(warning);
 	}

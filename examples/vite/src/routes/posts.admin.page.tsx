@@ -16,9 +16,7 @@ export default function NewPost() {
 					<label>
 						Post Title:{' '}
 						{errors?.title ? (
-							<em class="text-red-600">
-								{errors.title}
-							</em>
+							<em class="text-red-600">{errors.title}</em>
 						) : null}
 						<input type="text" name="title" class={inputClassName} />
 					</label>
@@ -26,11 +24,7 @@ export default function NewPost() {
 				<p>
 					<label>
 						Post Slug:{' '}
-						{errors?.slug ? (
-							<em class="text-red-600">
-								{errors.slug}
-							</em>
-						) : null}
+						{errors?.slug ? <em class="text-red-600">{errors.slug}</em> : null}
 						<input type="text" name="slug" class={inputClassName} />
 					</label>
 				</p>
@@ -38,9 +32,7 @@ export default function NewPost() {
 					<label for="markdown">
 						Markdown:{' '}
 						{errors?.markdown ? (
-							<em class="text-red-600">
-								{errors.markdown}
-							</em>
+							<em class="text-red-600">{errors.markdown}</em>
 						) : null}
 					</label>
 					<br />

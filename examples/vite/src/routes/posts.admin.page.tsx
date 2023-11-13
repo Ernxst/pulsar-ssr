@@ -16,7 +16,7 @@ export default function NewPost() {
 					<label>
 						Post Title:{' '}
 						{errors?.title ? (
-							<em class="text-red-600" safe>
+							<em class="text-red-600">
 								{errors.title}
 							</em>
 						) : null}
@@ -27,7 +27,7 @@ export default function NewPost() {
 					<label>
 						Post Slug:{' '}
 						{errors?.slug ? (
-							<em class="text-red-600" safe>
+							<em class="text-red-600">
 								{errors.slug}
 							</em>
 						) : null}
@@ -38,7 +38,7 @@ export default function NewPost() {
 					<label for="markdown">
 						Markdown:{' '}
 						{errors?.markdown ? (
-							<em class="text-red-600" safe>
+							<em class="text-red-600">
 								{errors.markdown}
 							</em>
 						) : null}

@@ -48,7 +48,7 @@ export default function Page() {
 
 					<ul>
 						{users.map((user) => (
-							<li safe>{user.name}</li>
+							<li>{user.name}</li>
 						))}
 					</ul>
 					{/* TODO: When layouts are ready - this can be moved to the layout */}

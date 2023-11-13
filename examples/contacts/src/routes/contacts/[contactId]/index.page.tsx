@@ -38,13 +38,13 @@ export default function Contact() {
 
 				{contact.twitter ? (
 					<p>
-						<a href={`https://twitter.com/${contact.twitter}`} safe>
+						<a href={`https://twitter.com/${contact.twitter}`}>
 							{contact.twitter}
 						</a>
 					</p>
 				) : null}
 
-				{contact.notes ? <p safe>{contact.notes}</p> : null}
+				{contact.notes ? <p>{contact.notes}</p> : null}
 			</div>
 		</div>
 	);

@@ -1,5 +1,4 @@
 /// <reference lib="dom" />
-/// <reference lib="dom.iterable" />
 
 interface LogMessage {
 	type: 'LOG';

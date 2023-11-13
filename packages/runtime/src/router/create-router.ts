@@ -1,6 +1,7 @@
 import { RegExpRouter } from 'hono/router/reg-exp-router';
 import { SmartRouter } from 'hono/router/smart-router';
 import { TrieRouter } from 'hono/router/trie-router';
+import { renderToReadableStream } from 'hono/jsx/streaming';
 import type { RouteFunctionArgs } from 'pulsar/route';
 import {
 	PULSAR_FORM_ACTIONS_ENDPOINT,
@@ -36,6 +37,7 @@ export function createPulsarRouter({ routes }: ServerBuild) {
 					default: Page,
 					loader,
 					actions: _,
+					stream,
 					...handlers
 				} = await loadModule();
 
@@ -53,6 +55,14 @@ export function createPulsarRouter({ routes }: ServerBuild) {
 					const result = await Page.bind(Page)();
 					const html =
 						typeof result === 'object' && result ? result.toString() : result;
+
+					if (stream) {
+						const body = renderToReadableStream(html);
+						ctx.response.headers.set("Transfer-Encoding", 'chunked');
+						ctx.response.headers.set("Content-Type", 'text/html; charset=UTF-8');
+						return body;
+					}
+
 					return ctx.html(html);
 				}
 

@@ -24,6 +24,7 @@ export type PulsarModule = {
 	[K in HTTPMethod]?: RouteFunction<any, any, any, any>;
 } & {
 	actions?: Actions;
+	stream?: boolean;
 	loader?: LoaderFunction<any, any, any>;
 	/**
 	 * page component

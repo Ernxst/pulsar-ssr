@@ -17,7 +17,10 @@ export function createResponse(body: unknown, init: Init): Response {
 			return new Response(JSON.stringify(body), init);
 
 		case 'ReadableStream':
-			init.headers.set('Content-Type', 'text/event-stream; charset=utf-8');
+			if (!init.headers.get('Content-Type')) {
+				init.headers.set('Content-Type', 'text/event-stream; charset=utf-8');
+			}
+
 			return new Response(body as ReadableStream, init);
 
 		case undefined:

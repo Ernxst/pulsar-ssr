@@ -2,12 +2,6 @@ import type { FC, JSXNode } from 'hono/jsx';
 
 export type Props = Record<string, any>;
 
-export interface HtmlEscaped {
-	isEscaped: true;
-}
-
-export type HtmlEscapedString = string & HtmlEscaped;
-
 export type ComponentProps<TComponent extends FC<any>> = TComponent extends FC<
 	infer TProps
 >

@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 export { memo, createContext, useContext, Fragment } from 'hono/jsx';
+export type { HtmlEscaped, HtmlEscapedString } from 'hono/utils/html'
 
 export type { FC, FC as Component } from 'hono/jsx';
 export type {
 	ComponentProps,
-	HtmlEscapedString,
 	Props,
 	PropsWithChildren,
 	Children,

@@ -2,7 +2,6 @@ import { RegExpRouter } from 'hono/router/reg-exp-router';
 import { SmartRouter } from 'hono/router/smart-router';
 import { TrieRouter } from 'hono/router/trie-router';
 import type { RouteFunctionArgs } from 'pulsar/route';
-import Html from 'pulsar/components';
 import {
 	PULSAR_FORM_ACTIONS_ENDPOINT,
 	PULSAR_FORM_ACTIONS_METHOD,
@@ -51,10 +50,10 @@ export function createPulsarRouter({ routes }: ServerBuild) {
 						setLoaderData(Page, loaderData);
 					}
 
-					// In case the consumer did not import Html from pulsar
-					(globalThis as any)['Html'] = Html;
 					const result = await Page.bind(Page)();
-					return ctx.html(result);
+					const html =
+						typeof result === 'object' && result ? result.toString() : result;
+					return ctx.html(html);
 				}
 
 				const handle = handlers[method];

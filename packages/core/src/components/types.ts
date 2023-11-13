@@ -1,4 +1,4 @@
-import type { Component } from '@kitajs/html';
+import type { FC, JSXNode } from 'hono/jsx';
 
 export type Props = Record<string, any>;
 
@@ -8,5 +8,15 @@ export interface HtmlEscaped {
 
 export type HtmlEscapedString = string & HtmlEscaped;
 
-export type ComponentProps<TComponent extends Component<any>> =
-	TComponent extends Component<infer TProps> ? TProps : never;
+export type ComponentProps<TComponent extends FC<any>> = TComponent extends FC<
+	infer TProps
+>
+	? TProps
+	: never;
+
+// eslint-disable-next-line @typescript-eslint/ban-types
+export type PropsWithChildren<TProps extends object = {}> = {
+	children?: Children;
+} & TProps;
+
+export type Children = string | number | JSXNode | Children[];

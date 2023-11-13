@@ -11,7 +11,7 @@ import { validateFormActions } from './validate';
 
 function findFormPropDefinition(opts: {
 	formIndex: number;
-	prop: keyof JSX.HtmlFormTag;
+	prop: keyof Hono.FormHTMLAttributes;
 	value: string;
 	code: string;
 }): [number, number] {

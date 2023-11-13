@@ -1,6 +1,5 @@
 /// <reference lib="dom" />
 /// <reference lib="dom.iterable" />
-import Html from '@kitajs/html';
 
 interface LogMessage {
 	type: 'LOG';
@@ -88,11 +87,14 @@ export const LiveReload =
 
 				return (
 					<>
-						<script>
-							{js`${liveReloadConnect.toString()}`}
-							{`\n`}
-							{js`liveReloadConnect()`}
-						</script>
+						<script
+							dangerouslySetInnerHTML={{
+								__html: js`
+${liveReloadConnect.toString()}
+liveReloadConnect()
+`,
+							}}
+						></script>
 					</>
 				);
 		  };

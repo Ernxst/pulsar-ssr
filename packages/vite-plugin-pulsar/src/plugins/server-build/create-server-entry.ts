@@ -16,7 +16,6 @@ export function createServerEntry({ routes, adapter }: Options): string {
 	}));
 
 	return `
-	import "@kitajs/html/register";
 	import { ${adapter.adapterFunction} } from "@pulsarjs/runtime/adapters";
 	${routeIds
 		.map(

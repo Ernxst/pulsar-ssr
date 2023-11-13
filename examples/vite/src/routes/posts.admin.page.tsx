@@ -46,7 +46,7 @@ export default function NewPost() {
 					<br />
 					<textarea
 						id="markdown"
-						rows="20"
+						rows={20}
 						name="markdown"
 						class={`${inputClassName} font-mono`}
 					/>
@@ -86,6 +86,6 @@ export const actions = {
 
 		// await createPost({ title, slug, markdown });
 
-		return redirect('/welcome');
+		throw redirect('/welcome');
 	},
 };

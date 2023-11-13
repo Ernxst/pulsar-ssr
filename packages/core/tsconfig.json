@@ -1,12 +1,10 @@
 {
 	"extends": ["../../tsconfig.base.json"],
 	"compilerOptions": {
-		"jsx": "react",
-		"jsxFactory": "Html.createElement",
-		"jsxFragmentFactory": "Html.Fragment",
+		"jsx": "react-jsx",
+		"jsxImportSource": "hono/jsx",
 		"baseUrl": ".",
-		"outDir": "./dist",
-		"plugins": [{ "name": "@kitajs/ts-html-plugin" }]
+		"outDir": "./dist"
 	},
 	"include": ["src"],
 	"exclude": ["dist", "node_modules", "**/*.spec.ts"]

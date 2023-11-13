@@ -1,4 +1,3 @@
-import type JSX from 'pulsar/components';
 import type { CallExpression, ObjectExpression } from '@babel/types';
 import type MagicString from 'magic-string';
 import { match, parse } from './ast';
@@ -34,18 +33,20 @@ export function replaceAll({
 
 // This is after the JSX has been transformed, so everything will in object syntax
 export function getElementProps<
-	const TElement extends keyof JSX.IntrinsicElements,
-	const TProps extends string & keyof JSX.IntrinsicElements[TElement],
+	const TElement extends keyof Hono.IntrinsicElements,
+	const TProps extends string & keyof Hono.IntrinsicElements[TElement],
 >(
 	element: TElement,
 	code: string,
 	propsToExtract: TProps[]
-): Partial<Pick<JSX.IntrinsicElements[TElement], TProps>>[] {
+): Partial<Pick<Hono.IntrinsicElements[TElement], TProps>>[] {
 	const createElementQuery = makeCreateElementQuery(element);
 	const propQuery = makeElementPropQuery(propsToExtract);
 
 	const root = parse(code);
 	const usages = match<CallExpression>(root, createElementQuery);
+
+	console.log(code);
 
 	return usages.map((node) => {
 		const nodeCode = code.slice(node.start!, node.end!);
@@ -65,7 +66,7 @@ export function getElementProps<
 }
 
 function makeCreateElementQuery(element: string) {
-	const htmlQuery = `MemberExpression:has(Identifier[name=Html]):has(Identifier[name=createElement])`;
+	const htmlQuery = `Identifier[name=jsxDEV], Identifier[name=jsx]`;
 	const elQuery = `Literal[value=${element}]`;
 
 	return `CallExpression:has(${htmlQuery}):has(${elQuery})`;

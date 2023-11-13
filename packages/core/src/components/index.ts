@@ -1,11 +1,14 @@
 /* eslint-disable @typescript-eslint/no-namespace */
-export { memo } from './memo';
-export { createContext, useContext } from './context';
+export { memo, createContext, useContext, Fragment } from 'hono/jsx';
 
-export type { ComponentProps, HtmlEscapedString, Props } from './types';
-export type { Children, Component, PropsWithChildren } from '@kitajs/html';
-
-export { Html as default } from '@kitajs/html';
+export type { FC, FC as Component } from 'hono/jsx';
+export type {
+	ComponentProps,
+	HtmlEscapedString,
+	Props,
+	PropsWithChildren,
+	Children,
+} from './types';
 
 export { LiveReload } from './LiveReload';
 
@@ -13,8 +16,8 @@ export { LiveReload } from './LiveReload';
 type AnyString = string & {};
 
 declare global {
-	namespace JSX {
-		interface HtmlFormTag {
+	namespace Hono {
+		interface FormHTMLAttributes {
 			/**
 			 * Choose which action, in your route file, this form will submit to.
 			 * Note that you can only submit to actions defined in the same route file.

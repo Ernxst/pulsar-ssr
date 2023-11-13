@@ -58,8 +58,11 @@ export function createPulsarRouter({ routes }: ServerBuild) {
 
 					if (stream) {
 						const body = renderToReadableStream(html);
-						ctx.response.headers.set("Transfer-Encoding", 'chunked');
-						ctx.response.headers.set("Content-Type", 'text/html; charset=UTF-8');
+						ctx.response.headers.set('Transfer-Encoding', 'chunked');
+						ctx.response.headers.set(
+							'Content-Type',
+							'text/html; charset=UTF-8'
+						);
 						return body;
 					}
 

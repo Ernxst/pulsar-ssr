@@ -10,7 +10,7 @@ import type { Plugin } from 'vite';
 import type { Adapter } from './adapters';
 import type { Options } from './plugins/types';
 
-// TODO: Error boundaries and (nested) layouts and response streaming for pages
+// TODO: Error boundaries and (nested) layouts
 
 export interface PulsarOptions {
 	/**

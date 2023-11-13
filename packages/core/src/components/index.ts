@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 export { memo, createContext, useContext, Fragment } from 'hono/jsx';
-export type { HtmlEscaped, HtmlEscapedString } from 'hono/utils/html'
-export { Suspense } from 'hono/jsx/streaming'
+export type { HtmlEscaped, HtmlEscapedString } from 'hono/utils/html';
+export { Suspense } from 'hono/jsx/streaming';
 
 export type { FC, FC as Component } from 'hono/jsx';
 export type {

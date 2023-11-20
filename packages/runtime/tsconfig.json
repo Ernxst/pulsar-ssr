@@ -3,6 +3,7 @@
 	"compilerOptions": {
 		"baseUrl": ".",
 		"outDir": "./dist",
+		"jsxImportSource": "pulsar/jsx",
 		"types": ["@cloudflare/workers-types"]
 	},
 	"include": ["src"],

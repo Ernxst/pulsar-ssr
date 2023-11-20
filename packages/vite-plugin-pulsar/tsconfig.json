@@ -4,7 +4,7 @@
 		"baseUrl": ".",
 		"outDir": "./dist",
 		"jsx": "react-jsx",
-		"jsxImportSource": "hono/jsx"
+		"jsxImportSource": "pulsar/jsx"
 	},
 	"include": ["src"],
 	"exclude": ["dist", "node_modules", "**/*.spec.ts"]

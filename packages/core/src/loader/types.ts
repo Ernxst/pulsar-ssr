@@ -7,7 +7,6 @@ declare global {
 	// eslint-disable-next-line @typescript-eslint/no-namespace
 	namespace Pulsar {
 		interface Env {
-			[index: string]: unknown;
 		}
 	}
 }

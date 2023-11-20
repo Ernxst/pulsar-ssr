@@ -115,6 +115,7 @@ export function createPulsarRequest(
 	const headers = req.headers as Record<string, string>;
 	const base = '';
 	const request = new Request(base + req.url, {
+		// @ts-expect-error it's fine
 		duplex: 'half',
 		method: req.method,
 		headers,

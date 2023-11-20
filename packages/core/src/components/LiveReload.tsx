@@ -80,7 +80,7 @@ function liveReloadConnect(config?: { onOpen: () => any }) {
 // This way devs don't have to worry about doing the NODE_ENV check themselves.
 export const LiveReload =
 	process.env.NODE_ENV !== 'development'
-		? () => null
+		? () => <></>
 		: function LiveReload() {
 				const js = String.raw;
 

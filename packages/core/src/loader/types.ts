@@ -3,6 +3,15 @@ import type { cacheHeader } from 'pretty-cache-header';
 import type { QueryParams, UrlPath, inferPathParams } from 'src/types';
 import type { Runtime } from 'hono/adapter';
 
+declare global {
+	// eslint-disable-next-line @typescript-eslint/no-namespace
+	namespace Pulsar {
+		interface Env {
+			[index: string]: unknown;
+		}
+	}
+}
+
 export type CacheOptions = Parameters<typeof cacheHeader>[0];
 
 export interface PulsarCookieOptions extends CookieOptions {
@@ -53,6 +62,10 @@ export interface LoaderFunctionArgs<
 	 */
 	readonly query: TQuery;
 	readonly cookies: CookieHandler;
+	/**
+	 * Environment variables.
+	 */
+	readonly env: Pulsar.Env;
 	/**
 	 * Set the response status code.
 	 */

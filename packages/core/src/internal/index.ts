@@ -1,6 +1,6 @@
 export { ROUTE_PATTERN } from './constants';
 export { createRouteContext } from './create-route-context';
-export { isRedirect } from './utils/redirect';
+export { isRedirect, type Redirect } from './utils/redirect';
 export { setActionData, setLoaderData } from './utils/data';
 export {
 	createActionUrl,

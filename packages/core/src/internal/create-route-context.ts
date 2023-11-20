@@ -16,6 +16,7 @@ interface Options {
 	path: string;
 	request: Request;
 	params: Record<string, string>;
+	env: Pulsar.Env;
 }
 
 /**
@@ -30,6 +31,7 @@ export async function createRouteContext<
 	request,
 	path,
 	params,
+	env,
 }: Options): Promise<RouteFunctionArgs<TPath, TQuery, TBody>> {
 	const body = await parseBody(request.clone());
 	const resHeaders = new Headers();
@@ -86,6 +88,10 @@ export async function createRouteContext<
 					this.set(name, '', { ...options, maxAge: 0 });
 				},
 			};
+		},
+
+		get env() {
+			return env;
 		},
 
 		cache(options) {

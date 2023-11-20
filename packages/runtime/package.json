@@ -87,6 +87,7 @@
 		"pulsar": "workspace:*"
 	},
 	"devDependencies": {
+		"@cloudflare/workers-types": "4.20231025.0",
 		"@types/node": "18.18.8",
 		"@types/set-cookie-parser": "2.4.6",
 		"hono": "3.10.0",

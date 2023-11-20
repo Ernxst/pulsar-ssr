@@ -1,7 +1,7 @@
 import type { IncomingMessage, ServerResponse } from 'node:http';
-import { createPulsarRequest, sendPulsarResponse } from 'src/utils/http';
 import type { ServerBuild } from 'src/router/types';
-import { createFetchRequestHandler } from './fetch';
+import { createPulsarRequest, sendPulsarResponse } from 'src/utils/http';
+import { createFetchRequestHandler } from './fetch/fetch';
 
 export function createHttpRequestHandler({ build }: { build: ServerBuild }) {
 	// creates a Fetch API request handler from the server build

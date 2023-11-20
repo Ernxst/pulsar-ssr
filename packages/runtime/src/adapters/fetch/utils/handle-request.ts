@@ -22,7 +22,7 @@ export async function handleRequest({ request, router, env }: HandleOptions) {
 		try {
 			response = await render({ request, env, handler: handlers[0], stash });
 		} catch (error) {
-			response = await handleError(error, { router, url, env })
+			response = await handleError(error, { router, url, env });
 		}
 	} else {
 		response = await handleNotFound({ router, url, env });
@@ -43,7 +43,10 @@ export async function handleRequest({ request, router, env }: HandleOptions) {
 	return response;
 }
 
-async function handleError(error: unknown, { router, url, env }: NotFoundOptions) {
+async function handleError(
+	error: unknown,
+	{ router, url, env }: NotFoundOptions
+) {
 	if (isRedirect(error)) {
 		return handleRedirect(error);
 	} else if (isNotFound(error)) {

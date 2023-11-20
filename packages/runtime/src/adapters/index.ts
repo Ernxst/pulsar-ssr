@@ -1,9 +1,9 @@
 export {
 	createFetchRequestHandler,
-	type PulsarFetchHandler
+	type PulsarFetchHandler,
 } from './fetch/fetch';
 export {
 	createCloudflareWorker,
-	type CloudflareWorker
+	type CloudflareWorker,
 } from './fetch/cloudflare';
 export { createHttpRequestHandler, type PulsarHttpHandler } from './http';

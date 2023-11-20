@@ -42,6 +42,36 @@
 				"default": "./dist/components/index.cjs"
 			}
 		},
+		"./jsx": {
+			"import": {
+				"types": "./dist/jsx/index.d.ts",
+				"default": "./dist/jsx/index.js"
+			},
+			"require": {
+				"types": "./dist/jsx/index.d.cts",
+				"default": "./dist/jsx/index.cjs"
+			}
+		},
+		"./jsx/jsx-runtime": {
+			"import": {
+				"types": "./dist/jsx/jsx-runtime.d.ts",
+				"default": "./dist/jsx/jsx-runtime.js"
+			},
+			"require": {
+				"types": "./dist/jsx/jsx-runtime.d.cts",
+				"default": "./dist/jsx/jsx-runtime.cjs"
+			}
+		},
+		"./jsx/jsx-dev-runtime": {
+			"import": {
+				"types": "./dist/jsx/jsx-dev-runtime.d.ts",
+				"default": "./dist/jsx/jsx-dev-runtime.js"
+			},
+			"require": {
+				"types": "./dist/jsx/jsx-dev-runtime.d.cts",
+				"default": "./dist/jsx/jsx-dev-runtime.cjs"
+			}
+		},
 		"./actions": {
 			"import": {
 				"types": "./dist/actions/index.d.ts",
@@ -95,6 +125,18 @@
 			"components": [
 				"./dist/components/index.d.ts",
 				"./dist/components/index.d.cts"
+			],
+			"jsx": [
+				"./dist/jsx/index.d.ts",
+				"./dist/jsx/index.d.cts"
+			],
+			"jsx-runtime": [
+				"./dist/jsx/jsx-runtime.d.ts",
+				"./dist/jsx/jsx-runtime.d.cts"
+			],
+			"jsx-dev-runtime": [
+				"./dist/jsx/jsx-dev-runtime.d.ts",
+				"./dist/jsx/jsx-dev-runtime.d.cts"
 			],
 			"internal": [
 				"./dist/internal/index.d.ts",

@@ -1,16 +1,16 @@
-import type { FC, JSXNode } from 'hono/jsx';
+import type { Child, FC } from "hono/jsx";
 
-export type Props = Record<string, any>;
+type Props = Record<string, any>;
 
 export type ComponentProps<TComponent extends FC<any>> = TComponent extends FC<
-	infer TProps
+  infer TProps
 >
-	? TProps
-	: never;
+  ? TProps
+  : never;
 
 // eslint-disable-next-line @typescript-eslint/ban-types
-export type PropsWithChildren<TProps extends object = {}> = {
-	children?: Children;
+export type PropsWithChildren<TProps extends Props = {}> = {
+  children?: Child;
 } & TProps;
 
-export type Children = string | number | JSXNode | Children[];
+export { Fragment, JSXNode, Child as Children, FC as Component } from "hono/jsx";

@@ -1,31 +1,10 @@
-/* eslint-disable @typescript-eslint/no-namespace */
-export { memo, createContext, useContext, Fragment } from 'hono/jsx';
-export type { HtmlEscaped, HtmlEscapedString } from 'hono/utils/html';
+export { Fragment, createContext, memo, useContext } from 'hono/jsx';
 export { Suspense } from 'hono/jsx/streaming';
-
-export type { FC, FC as Component } from 'hono/jsx';
-export type {
-	ComponentProps,
-	Props,
-	PropsWithChildren,
-	Children,
-} from './types';
-
 export { LiveReload } from './LiveReload';
 
-// eslint-disable-next-line @typescript-eslint/ban-types
-type AnyString = string & {};
-
-declare global {
-	namespace Hono {
-		interface FormHTMLAttributes {
-			/**
-			 * Choose which action, in your route file, this form will submit to.
-			 * Note that you can only submit to actions defined in the same route file.
-			 *
-			 * Note that if you set this, a `POST` submission will always be made.
-			 */
-			formaction?: 'default' | AnyString;
-		}
-	}
-}
+/**
+ * We export these from here, rather than the JSX entry because they import 
+ * Hono types. Importing anything from hono/jsx will overwrite our custom
+ * JSX types for something
+ */
+export type { Children, Component, ComponentProps, PropsWithChildren } from "./types"

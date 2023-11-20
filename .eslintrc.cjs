@@ -28,6 +28,7 @@ module.exports = {
 		'@typescript-eslint/indent': 'off',
 		'@typescript-eslint/comma-dangle': 'off',
 		'@typescript-eslint/member-delimiter-style': 'off',
+		'@typescript-eslint/no-namespace': 'off',
 		'@typescript-eslint/no-unused-vars': [
 			'error',
 			{

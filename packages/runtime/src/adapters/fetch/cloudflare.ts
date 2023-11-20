@@ -1,3 +1,4 @@
+import type { ExecutionContext } from "@cloudflare/workers-types";
 import { createPulsarRouter } from 'src/router/create-router';
 import type { ServerBuild } from 'src/router/types';
 import { handleRequest } from './utils/handle-request';

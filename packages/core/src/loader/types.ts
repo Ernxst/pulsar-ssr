@@ -4,7 +4,7 @@ import type { QueryParams, UrlPath, inferPathParams } from 'src/types';
 import type { Runtime } from 'hono/adapter';
 
 declare global {
-	// eslint-disable-next-line @typescript-eslint/no-namespace
+
 	namespace Pulsar {
 		interface Env {}
 	}

@@ -1,9 +1,9 @@
 {
 	"extends": ["../../tsconfig.base.json"],
 	"compilerOptions": {
+		"jsxImportSource": "pulsar/jsx",
 		"baseUrl": ".",
-		"outDir": "./dist",
-		"jsxImportSource": "pulsar/jsx"
+		"outDir": "./dist"
 	},
 	"include": ["src"],
 	"exclude": ["dist", "node_modules", "**/*.spec.ts"]

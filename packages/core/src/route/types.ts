@@ -4,7 +4,7 @@ import type { QueryParams, UrlPath } from 'src/types';
 export interface RouteFunctionArgs<
 	TPath extends UrlPath = any,
 	TQuery extends QueryParams = QueryParams,
-	TBody = unknown,
+	TBody = unknown
 > extends LoaderFunctionArgs<TPath, TQuery> {
 	/**
 	 * The parsed request body. If you have supplied a body schema, it
@@ -17,7 +17,7 @@ export type RouteFunction<
 	TPath extends UrlPath,
 	TQuery extends QueryParams,
 	TBody,
-	TOut,
+	TOut
 > = (context: RouteFunctionArgs<TPath, TQuery, TBody>) => TOut;
 
 export type inferRouteOutput<TRoute extends RouteFunction<any, any, any, any>> =

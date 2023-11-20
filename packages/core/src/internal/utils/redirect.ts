@@ -1,10 +1,7 @@
 export type RedirectStatus = 301 | 302 | 303 | 307 | 308;
 
 export class Redirect {
-	constructor(
-		readonly path: string | URL,
-		readonly status: RedirectStatus
-	) {}
+	constructor(readonly path: string | URL, readonly status: RedirectStatus) {}
 }
 
 /**

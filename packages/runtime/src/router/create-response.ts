@@ -9,7 +9,7 @@ export function createResponse(body: unknown, init: Init): Response {
 	switch (body?.constructor?.name) {
 		case 'String':
 		case 'Blob':
-			return new Response(body as string | Blob, init);
+			return new Response(body as any, init);
 
 		case 'Object':
 		case 'Array':

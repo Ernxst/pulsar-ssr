@@ -2,7 +2,10 @@ import { type LoaderFunctionArgs, useLoaderData } from 'pulsar/loader';
 import type { RouteFunctionArgs } from 'pulsar/route';
 import { LiveReload } from 'pulsar/components';
 import globalCssHref from '../global.css?url';
+import appCssHref from '../app.css?url';
 import Button from '../components/Button';
+import pulsarLogo from '../assets/pulsar.svg';
+import viteLogo from '/vite.svg';
 
 export function POST({
 	request,
@@ -24,15 +27,12 @@ export async function PATCH({ json }: RouteFunctionArgs) {
 	return json({ foo: '' });
 }
 
-export function loader({ request, runtime }: LoaderFunctionArgs) {
-	const users = [
-		{ id: 1, name: 'John Doe', cookie: request.headers.get('cookie') },
-	];
-	return { users, runtime };
+export function loader({ runtime }: LoaderFunctionArgs) {
+	return { runtime };
 }
 
 export default function Page() {
-	const { users, runtime } = useLoaderData<typeof loader>();
+	const { runtime } = useLoaderData<typeof loader>();
 	console.log('I am run on the server!');
 
 	return (
@@ -40,17 +40,28 @@ export default function Page() {
 			<html>
 				<head>
 					<link rel="stylesheet" href={globalCssHref} />
+					<link rel="stylesheet" href={appCssHref} />
 				</head>
 				<body>
-					<h1>Hello World</h1>
-					<p>Served on the {runtime} runtime</p>
-					<Button>Click me</Button>
-
-					<ul>
-						{users.map((user) => (
-							<li>{user.name}</li>
-						))}
-					</ul>
+					<div>
+						<a href="https://vitejs.dev" target="_blank">
+							<img src={viteLogo} class="logo" alt="Vite logo" />
+						</a>
+						<a href="https://react.dev" target="_blank">
+							<img src={pulsarLogo} class="logo pulsar" alt="Pulsar logo" />
+						</a>
+					</div>
+					<h1>Vite + Pulsar</h1>
+					<div class="card">
+						<p>Served on the {runtime} runtime</p>
+						<Button>Click me</Button>
+						<p>
+							Edit <code>src/routes/index.page.tsx</code> and save to test HMR
+						</p>
+					</div>
+					<p class="read-the-docs">
+						Click on the Vite and Pulsar logos to learn more
+					</p>
 					{/* TODO: When layouts are ready - this can be moved to the layout */}
 					<LiveReload />
 				</body>

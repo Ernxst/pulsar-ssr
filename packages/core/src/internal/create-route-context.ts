@@ -33,7 +33,10 @@ export async function createRouteContext<
 	params,
 	env,
 }: Options): Promise<RouteFunctionArgs<TPath, TQuery, TBody>> {
-	const body = await parseBody(request.clone());
+	const body =
+		request.body && Object.keys(request.body as any).length
+			? await parseBody(request.clone())
+			: undefined;
 	const resHeaders = new Headers();
 	let resStatus = 200;
 

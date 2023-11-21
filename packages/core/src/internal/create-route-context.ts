@@ -26,7 +26,7 @@ interface Options {
 export async function createRouteContext<
 	TPath extends UrlPath,
 	TQuery extends QueryParams,
-	TBody
+	TBody,
 >({
 	request,
 	path,

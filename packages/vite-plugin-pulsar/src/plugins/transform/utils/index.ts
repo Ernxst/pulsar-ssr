@@ -34,7 +34,7 @@ export function replaceAll({
 // This is after the JSX has been transformed, so everything will in object syntax
 export function getElementProps<
 	const TElement extends keyof Hono.IntrinsicElements,
-	const TProps extends string & keyof Hono.IntrinsicElements[TElement]
+	const TProps extends string & keyof Hono.IntrinsicElements[TElement],
 >(
 	element: TElement,
 	code: string,

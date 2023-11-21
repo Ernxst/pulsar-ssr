@@ -46,7 +46,7 @@ declare global {
 
 		type EventHandler<
 			E extends Event = Event,
-			T extends EventTarget = Element
+			T extends EventTarget = Element,
 		> = (event: E & { currentTarget: EventTarget & T }) => any;
 
 		type ClipboardEventHandler<T extends EventTarget> = EventHandler<

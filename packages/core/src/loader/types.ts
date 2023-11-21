@@ -4,7 +4,6 @@ import type { QueryParams, UrlPath, inferPathParams } from 'src/types';
 import type { Runtime } from 'hono/adapter';
 
 declare global {
-
 	namespace Pulsar {
 		interface Env {}
 	}

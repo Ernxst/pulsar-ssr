@@ -15,7 +15,7 @@ export type Actions =
 export interface ActionFunctionArgs<
 	TPath extends UrlPath = any,
 	TQuery extends QueryParams = QueryParams,
-	TBody = unknown
+	TBody = unknown,
 > extends LoaderFunctionArgs<TPath, TQuery> {
 	/**
 	 * The parsed request body. If you have supplied a body schema, it
@@ -28,7 +28,7 @@ export type ActionFunction<
 	TPath extends UrlPath,
 	TQuery extends QueryParams,
 	TBody,
-	TOut
+	TOut,
 > = (context: ActionFunctionArgs<TPath, TQuery, TBody>) => TOut;
 
 export type inferActionOutput<

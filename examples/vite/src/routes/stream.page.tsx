@@ -1,4 +1,4 @@
-import { LiveReload, Suspense } from 'pulsar/components';
+import { Suspense } from 'pulsar/components';
 
 export const stream = true;
 
@@ -10,14 +10,9 @@ async function AsyncComponent({ delay = 1000 }: { delay: number }) {
 export default function Page() {
 	return (
 		<>
-			<html>
-				<body>
-					<Suspense fallback={<div>loading...</div>}>
-						<AsyncComponent delay={2000} />
-					</Suspense>
-					<LiveReload />
-				</body>
-			</html>
+			<Suspense fallback={<div>loading...</div>}>
+				<AsyncComponent delay={2000} />
+			</Suspense>
 		</>
 	);
 }

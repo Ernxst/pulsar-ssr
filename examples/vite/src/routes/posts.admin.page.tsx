@@ -1,5 +1,4 @@
 import { redirect } from 'pulsar';
-import { LiveReload } from 'pulsar/components';
 import { type ActionFunctionArgs, useActionData } from 'pulsar/actions';
 
 const inputClassName =
@@ -10,7 +9,6 @@ export default function NewPost() {
 
 	return (
 		<>
-			<LiveReload />
 			<form formaction="default">
 				<p>
 					<label>

@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { ROUTE_PATTERN } from 'pulsar/internal';
+import { LAYOUT_PATTERN, ROUTE_PATTERN } from 'pulsar/internal';
 import { pulsarConfig } from 'src/plugins/config';
 import { pulsarDev } from 'src/plugins/dev-server';
 import { pulsarServerBuild } from 'src/plugins/server-build';
@@ -10,7 +10,7 @@ import type { Plugin } from 'vite';
 import type { Adapter } from './adapters';
 import type { Options } from './plugins/types';
 
-// TODO: Error boundaries and (nested) layouts
+// TODO: Error boundaries
 
 export interface PulsarOptions {
 	/**
@@ -45,14 +45,16 @@ export default function pulsar(options: PulsarOptions): Plugin[] {
 		);
 	}
 
-	const patterns = path.join(routes, ROUTE_PATTERN);
-	const entries = glob(patterns, { absolute: true });
-	const opts: Options = { routes: entries, routesDir: routes };
+	const routePatterns = path.join(routes, ROUTE_PATTERN);
+	const layoutPatterns = path.join(routes, LAYOUT_PATTERN);
+	const entries = glob(routePatterns, { absolute: true });
+	const layouts = glob(layoutPatterns, { absolute: true });
+	const opts: Options = { layouts, routes: entries, routesDir: routes };
 
 	return [
 		pulsarConfig(),
 		pulsarDev(opts),
-		pulsarTransform(opts),
+		pulsarTransform({ entry: serverEntry, ...opts }),
 		pulsarServerBuild({ entry: serverEntry, adapter, ...opts }),
 	];
 }

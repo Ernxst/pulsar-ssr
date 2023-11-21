@@ -42,6 +42,16 @@
 				"default": "./dist/components/index.cjs"
 			}
 		},
+		"./layouts": {
+			"import": {
+				"types": "./dist/layouts/index.d.ts",
+				"default": "./dist/layouts/index.js"
+			},
+			"require": {
+				"types": "./dist/layouts/index.d.cts",
+				"default": "./dist/layouts/index.cjs"
+			}
+		},
 		"./jsx": {
 			"import": {
 				"types": "./dist/jsx/index.d.ts",
@@ -125,6 +135,10 @@
 			"components": [
 				"./dist/components/index.d.ts",
 				"./dist/components/index.d.cts"
+			],
+			"layouts": [
+				"./dist/layouts/index.d.ts",
+				"./dist/layouts/index.d.cts"
 			],
 			"jsx": [
 				"./dist/jsx/index.d.ts",

@@ -1,4 +1,4 @@
-export { ROUTE_PATTERN } from './constants';
+export { ROUTE_PATTERN, LAYOUT_PATTERN } from './constants';
 export { createRouteContext } from './create-route-context';
 export { isRedirect, type Redirect } from './utils/redirect';
 export { setActionData, setLoaderData } from './utils/data';

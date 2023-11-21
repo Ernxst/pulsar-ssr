@@ -7,6 +7,7 @@ export default defineConfig({
 		'jsx/jsx-runtime': 'src/jsx/jsx-runtime.ts',
 		'jsx/jsx-dev-runtime': 'src/jsx/jsx-dev-runtime.ts',
 		'components/index': 'src/components/index.ts',
+		'layouts/index': 'src/layouts/index.ts',
 		'internal/index': 'src/internal/index.ts',
 		'actions/index': 'src/actions/index.ts',
 		'loader/index': 'src/loader/index.ts',

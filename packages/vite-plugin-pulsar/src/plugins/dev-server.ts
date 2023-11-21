@@ -39,7 +39,8 @@ export function pulsarDev({ routes, routesDir }: Options): Plugin {
 			};
 		},
 		async configureServer(vite) {
-			vite.watcher.on('change', async (file) => {
+			// TODO: Reload on CSS changes/deletes/adds
+			vite.watcher.on('change', (file) => {
 				if (matches(file, routesDir)) {
 					sendReload(vite, file, routesDir);
 				}

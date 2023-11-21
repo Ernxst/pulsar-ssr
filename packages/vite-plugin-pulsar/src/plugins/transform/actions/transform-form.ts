@@ -8,7 +8,7 @@ import {
 import { getElementProps } from '../utils';
 import type { ActionOptions } from './types';
 import { validateFormActions } from './validate';
-import "pulsar/jsx";
+import 'pulsar/jsx';
 
 function findFormPropDefinition(opts: {
 	formIndex: number;

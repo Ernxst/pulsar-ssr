@@ -1,7 +1,7 @@
 import type { CallExpression, ObjectExpression } from '@babel/types';
 import type MagicString from 'magic-string';
 import { match, parse } from './ast';
-import "pulsar/jsx";
+import 'pulsar/jsx';
 
 /**
  * Replace all occurrences of a pattern in a {@linkcode MagicString}

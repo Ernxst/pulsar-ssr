@@ -1,5 +1,5 @@
-import type { Plugin } from 'vite';
 import type { Adapter } from 'src/adapters';
+import type { Plugin } from 'vite';
 import type { Options } from '../types';
 import { createServerEntry } from './create-server-entry';
 

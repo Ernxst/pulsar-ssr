@@ -8,10 +8,11 @@ import {
 import { getElementProps } from '../utils';
 import type { ActionOptions } from './types';
 import { validateFormActions } from './validate';
+import "pulsar/jsx";
 
 function findFormPropDefinition(opts: {
 	formIndex: number;
-	prop: keyof Hono.FormHTMLAttributes;
+	prop: keyof Pulsar.HTMLFormAttributes;
 	value: string;
 	code: string;
 }): [number, number] {

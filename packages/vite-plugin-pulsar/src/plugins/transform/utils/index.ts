@@ -1,6 +1,7 @@
 import type { CallExpression, ObjectExpression } from '@babel/types';
 import type MagicString from 'magic-string';
 import { match, parse } from './ast';
+import "pulsar/jsx";
 
 /**
  * Replace all occurrences of a pattern in a {@linkcode MagicString}
@@ -33,13 +34,13 @@ export function replaceAll({
 
 // This is after the JSX has been transformed, so everything will in object syntax
 export function getElementProps<
-	const TElement extends keyof Hono.IntrinsicElements,
-	const TProps extends string & keyof Hono.IntrinsicElements[TElement],
+	const TElement extends string & keyof Pulsar.IntrinsicElements,
+	const TProps extends string & keyof Pulsar.IntrinsicElements[TElement],
 >(
 	element: TElement,
 	code: string,
 	propsToExtract: TProps[]
-): Partial<Pick<Hono.IntrinsicElements[TElement], TProps>>[] {
+): Partial<Pick<Pulsar.IntrinsicElements[TElement], TProps>>[] {
 	const createElementQuery = makeCreateElementQuery(element);
 	const propQuery = makeElementPropQuery(propsToExtract);
 

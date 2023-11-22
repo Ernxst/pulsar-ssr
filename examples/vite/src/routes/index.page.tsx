@@ -47,7 +47,8 @@ export default function Page() {
 				<p>Served on the {runtime} runtime</p>
 				<Button>Click me</Button>
 				<p>
-					Edit <code>src/routes/index.page.tsx</code> and save to test hot reloading
+					Edit <code>src/routes/index.page.tsx</code> and save to test hot
+					reloading
 				</p>
 			</div>
 			<p class="read-the-docs">

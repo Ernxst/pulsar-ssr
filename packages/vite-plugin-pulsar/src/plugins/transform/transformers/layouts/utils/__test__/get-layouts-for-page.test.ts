@@ -1,5 +1,5 @@
-import path from 'node:path';
 import fs from 'node:fs';
+import path from 'node:path';
 import {
 	afterAll,
 	afterEach,
@@ -10,7 +10,7 @@ import {
 	test,
 } from 'bun:test';
 import { mkdirp } from 'mkdirp';
-import { getLayoutsForPage } from '../utils';
+import { getLayoutsForPage } from '../get-layouts-for-page';
 
 describe('getLayoutsForPage', () => {
 	const base = 'tmp/src/routes';

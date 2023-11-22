@@ -1,11 +1,14 @@
 import path from 'node:path';
-import type MagicString from 'magic-string';
 import { LAYOUT_PATTERN, transformPathToUrl } from 'pulsar/internal';
 import glob from 'tiny-glob/sync';
-import type { Options } from '.';
+import type { Options } from '..';
 
 const NAMESPACE_LAYOUT_REGEX = /(?<prefix>.*?)\.layout\./;
 
+/**
+ * Given an absolute file path, return all the layouts in the routes directory
+ * that should be rendered.
+ */
 export function getLayoutsForPage({
 	absoluteFilePath,
 	routesDir,
@@ -34,6 +37,12 @@ export function getLayoutsForPage({
 		.sort((a, b) => sortLayouts(routesDir, a, b));
 }
 
+/**
+ * Sort the array of layouts such that:
+ *
+ * - Paths with less segments appear before paths with more segments
+ * - Namespaced layouts appear after general layouts
+ */
 function sortLayouts(routesDir: string, a: string, b: string) {
 	const aRelative = a.split(routesDir)[1];
 	const bRelative = b.split(routesDir)[1];
@@ -57,46 +66,4 @@ function sortLayouts(routesDir: string, a: string, b: string) {
 	}
 
 	return bIsNamespaced ? -1 : 0;
-}
-
-export function removeDefaultExport(
-	string: MagicString,
-	code: string,
-	[start, end]: [number, number]
-) {
-	const target = 'default';
-	const substringIndex = code.slice(start!, end!).indexOf(target);
-	const defaultKeywordStart = start! + substringIndex;
-
-	string.overwrite(
-		defaultKeywordStart,
-		defaultKeywordStart + target.length,
-		''
-	);
-}
-
-export function addLayoutImports(
-	string: MagicString,
-	files: string[],
-	filePath: string,
-	entry: string
-) {
-	return files.map((layout, idx) => {
-		let importPath;
-		let identifier;
-
-		if (layout === entry) {
-			identifier = 'Pulsar_Root_Layout';
-			importPath = entry;
-		} else {
-			identifier = `Pulsar_Layout_${idx}`;
-			const relative = path.relative(path.dirname(filePath), layout);
-			const transformed = relative.startsWith('.') ? relative : `./${relative}`;
-			importPath = transformed.replace(path.extname(transformed), '.js');
-		}
-
-		string.prepend(`import ${identifier} from "${importPath}";\n`);
-
-		return { identifier };
-	});
 }

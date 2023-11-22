@@ -1,13 +1,14 @@
 import fs from 'fs';
-import MagicString from 'magic-string';
+import * as parser from '@pulsarjs/parser';
 import { matches, matchesRoute } from 'src/utils/matches';
-import { type Plugin, type ResolvedConfig, transformWithEsbuild } from 'vite';
+import type { Plugin } from 'vite';
 import type { Options } from '../types';
-import { validateModule } from '../validate';
-import { transformFormAction } from './actions';
-import { applyLayoutsToPage } from './layouts';
-import { transformLoaderData } from './transform-loader-data';
-import { parse } from './utils/ast';
+import { PulsarLayouts } from './transformers/layouts';
+import { ActionData } from './transformers/action-data';
+import { FormAction } from './transformers/form-action';
+import { LoaderData } from './transformers/loader-data';
+import type { TransformOptions } from './types';
+import { PulsarModule } from './transformers/module';
 
 /**
  * Plugin to apply any transforms to the components
@@ -16,8 +17,6 @@ export function pulsarTransform({
 	routesDir,
 	entry,
 }: Options & { entry: string }): Plugin {
-	let resolvedConfig: ResolvedConfig;
-
 	/**
 	 * If using a virtual module (i.e, virtual:...) - vite won't be able to
 	 * resolve any local assets/files imported in the root layout, so we create
@@ -25,13 +24,12 @@ export function pulsarTransform({
 	 * it, but add on a suffix to help us distinguish between it and the original
 	 * entry
 	 */
-	const entryId = `${entry}?virtual`
+	const virtualServerEntryId = `${entry}?virtual`;
 
 	return {
 		name: 'pulsar-transform',
-		configResolved(config) {
-			resolvedConfig = config;
-		},
+		/** Run early so we transform the raw JSX, before it has been transformed */
+		enforce: 'pre',
 		/**
 		 * The server entry is actually the root layout.
 		 * - We need a server entry so vite knows what to build
@@ -51,65 +49,53 @@ export function pulsarTransform({
 		 * a root layout, but this would mean the file would only need something
 		 * like `export {};` which does not convey its importance at all.
 		 */
-		resolveId(id, importer) {
-			if (id === entryId) {
-				return { id: entryId, "meta": { importer } };
+		resolveId(id) {
+			if (id === virtualServerEntryId) {
+				return { id: virtualServerEntryId };
 			}
 		},
-		async load(id,) {
-			if (id === entryId) {
-				// Raw source code
+		async load(id) {
+			if (id === virtualServerEntryId) {
 				const code = fs.readFileSync(entry, 'utf8');
-
-				/**
-				 * All other pages are bundled by the time they reach the transform
-				 * function below, so we bundle it here so the same happens for the
-				 * root layout
-				 */
-				const result = await transformWithEsbuild(code, entry, {
-					/**
-					 * This is needed so any errors in the root layout are mapped
-					 * to the source root layout file and not the virtual module
-					 */
-					sourcemap: true,
-				});
-
-				return result;
+				return { code };
 			}
 		},
 		async transform(code, id) {
-			const isRootLayout = id === entryId;
+			const isRootLayout = id === virtualServerEntryId;
 
 			if (matches(id, routesDir) || isRootLayout) {
-				// Use the entry as the id
 				const filePath = isRootLayout ? entry : id;
-				const relativeFilePath = filePath.split(routesDir)[1];
+				const relativeId = filePath.split(routesDir)[1];
 
-				// Use magic string so our transformations don't break the source map
-				let string = new MagicString(code);
+				let ast = parser.parse(code);
+				const options: TransformOptions = {
+					ast,
+					relativeId,
+					id,
+					code,
+					entry: virtualServerEntryId,
+					routesDir,
+				};
 
-				const ast = parse(code);
-				validateModule({ ast, relativeFilePath });
+				PulsarModule.validate(options);
+				LoaderData.validate(options);
+				ActionData.validate(options);
+				FormAction.validate(options);
 
-				string = transformLoaderData({ ast, relativeFilePath, code, string });
-				string = transformFormAction({ ast, relativeFilePath, code, string });
+				ast = PulsarModule.transform(options);
+				ast = LoaderData.transform(options);
+				ast = ActionData.transform(options);
+				ast = FormAction.transform(options);
 
 				if (matchesRoute(id, routesDir)) {
-					string = await applyLayoutsToPage({
-						ast,
-						code,
-						string,
-						routesDir,
-						entry: entryId,
-						dev: resolvedConfig.command === 'serve',
-						absoluteFilePath: filePath,
-					});
+					PulsarLayouts.validate(options);
+					ast = PulsarLayouts.transform(options);
 				}
 
-				return {
-					code: string.toString(),
-					map: string.generateMap({ source: filePath, hires: 'boundary' }),
-				};
+				// TODO: Sourcemap isn't correct for root layout (WRONG FILE NAME)
+				// TODO: Sourcemap isn't correct for files with layouts (line numbers wrong cos of layout imports)
+				const result = parser.generate(ast, { sourceFileName: filePath });
+				return { code: result.code, map: result.map, ast };
 			}
 		},
 	};

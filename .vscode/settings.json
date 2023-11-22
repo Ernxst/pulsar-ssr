@@ -10,8 +10,10 @@
 	},
 	"cSpell.words": [
 		"antfu",
+		"astring",
 		"commitlint",
 		"esquery",
+		"estree",
 		"formaction",
 		"hono",
 		"kitajs",

@@ -6,6 +6,7 @@ import {
 	createActionUrl,
 	warnToConsole,
 } from 'pulsar/internal';
+import type MagicString from 'magic-string';
 import type { PulsarTransformer } from '../types';
 import { getElementProps } from '../utils';
 import { getNamedFormActions } from './action-data';
@@ -15,7 +16,7 @@ const Queries = {
 };
 
 export const FormAction: PulsarTransformer = {
-	validate(_options) {},
+	validate(_options) { },
 	transform({ code, ast, relativeId, string }) {
 		const actions = getNamedFormActions(ast, code);
 		const formProps = getElementProps('form', code, ast, [
@@ -33,6 +34,7 @@ export const FormAction: PulsarTransformer = {
 
 			if (formaction) {
 				validateFormActions({ ast, filePath: relativeId, formaction, actions });
+				let updateEntireNode = false;
 
 				// Action and form action is not allowed
 				if (action) {
@@ -50,7 +52,7 @@ export const FormAction: PulsarTransformer = {
 							(attr) => !isPropNode(attr, 'method')
 						);
 
-					string.overwrite(node.start, node.end, parser.generate(node));
+					updateEntireNode = true;
 				}
 
 				if (method) {
@@ -65,9 +67,7 @@ export const FormAction: PulsarTransformer = {
 
 						parser.replace(ast, (node) => {
 							if (isPropNode(node, 'method')) {
-								// @ts-expect-error slightly different types to Acorn
-								node.value = parser.stringLiteral(PULSAR_FORM_ACTIONS_METHOD);
-								string.overwrite(node.start, node.end, parser.generate(node));
+								updateChildNode(node, PULSAR_FORM_ACTIONS_METHOD, string);
 							}
 						});
 					}
@@ -78,23 +78,41 @@ export const FormAction: PulsarTransformer = {
 					);
 
 					node.openingElement.attributes.push(methodAttribute);
-					string.overwrite(node.start, node.end, parser.generate(node));
+					updateEntireNode = true;
 				}
 
 				parser.replace(ast, (node) => {
 					if (isPropNode(node, 'formaction')) {
 						const actionEndpoint = createActionUrl(relativeId, formaction);
-						// @ts-expect-error slightly different types to Acorn
-						node.value = parser.stringLiteral(actionEndpoint);
-						string.overwrite(node.start, node.end, parser.generate(node));
+						updateChildNode(node, actionEndpoint, string);
 					}
 				});
+
+				/**
+				 * Updates to the entire node must happen after we've replaced the individual
+				 * JSX attributes as magic string wont allow us to do otherwise as we
+				 * would have already replaced the string we are trying to update
+				 */
+				if (updateEntireNode) {
+					string.overwrite(node.start, node.end, parser.generate(node))
+				}
 			}
 		});
 
 		return ast;
 	},
 };
+
+function updateChildNode(parent: parser.JSXAttribute, value: string, string: MagicString) {
+	const { start, end } = parent.value!
+
+	const valueNode = parser.stringLiteral(value) as unknown as parser.Literal
+	valueNode.start = start;
+	valueNode.end = end;
+
+	parent.value = valueNode
+	string.overwrite(start, end, parser.generate(valueNode));
+}
 
 function isPropNode(
 	node: parser.Node,

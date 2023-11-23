@@ -9,7 +9,6 @@ export function pulsarServerBuild({
 	adapter,
 	routesDir,
 }: {
-	entry: string;
 	adapter: Adapter;
 } & Options): Plugin {
 	/**

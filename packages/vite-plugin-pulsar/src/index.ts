@@ -49,12 +49,17 @@ export default function pulsar(options: PulsarOptions): Plugin[] {
 	const layoutPatterns = path.join(routes, LAYOUT_PATTERN);
 	const entries = glob(routePatterns, { absolute: true });
 	const layouts = glob(layoutPatterns, { absolute: true });
-	const opts: Options = { layouts, routes: entries, routesDir: routes };
+	const opts: Options = {
+		layouts,
+		routes: entries,
+		routesDir: routes,
+		entry: serverEntry,
+	};
 
 	return [
 		pulsarConfig(),
 		pulsarDev(opts),
-		pulsarTransform({ entry: serverEntry, ...opts }),
-		pulsarServerBuild({ entry: serverEntry, adapter, ...opts }),
+		pulsarTransform(opts),
+		pulsarServerBuild({ ...opts, adapter }),
 	];
 }

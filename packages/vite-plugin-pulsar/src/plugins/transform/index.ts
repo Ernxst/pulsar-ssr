@@ -1,5 +1,5 @@
-import * as parser from '@pulsarjs/parser';
 import fs from 'fs';
+import * as parser from '@pulsarjs/parser';
 import MagicString from 'magic-string';
 import { matches, matchesRoute } from 'src/utils/matches';
 import type { Plugin } from 'vite';
@@ -14,10 +14,7 @@ import type { TransformOptions } from './types';
 /**
  * Plugin to apply any transforms to the components
  */
-export function pulsarTransform({
-	routesDir,
-	entry,
-}: Options & { entry: string }): Plugin {
+export function pulsarTransform({ routesDir, entry }: Options): Plugin {
 	/**
 	 * If using a virtual module (i.e, virtual:...) - vite won't be able to
 	 * resolve any local assets/files imported in the root layout, so we create

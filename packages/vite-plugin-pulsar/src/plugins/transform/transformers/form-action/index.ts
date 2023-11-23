@@ -16,7 +16,7 @@ export const Queries = {
 };
 
 export const FormAction: PulsarTransformer = {
-	validate(_options) { },
+	validate(_options) {},
 	transform({ ast, relativeId, string, logger }) {
 		const actions = getNamedFormActions(ast);
 		const formProps = getElementProps('form', ast, [

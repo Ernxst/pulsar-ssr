@@ -1,15 +1,15 @@
-import fs from 'fs';
 import * as parser from '@pulsarjs/parser';
+import fs from 'fs';
+import MagicString from 'magic-string';
 import { matches, matchesRoute } from 'src/utils/matches';
 import type { Plugin } from 'vite';
-import MagicString from 'magic-string';
 import type { Options } from '../types';
-import { PulsarLayouts } from './transformers/layouts';
 import { ActionData } from './transformers/action-data';
 import { FormAction } from './transformers/form-action';
+import { PulsarLayouts } from './transformers/layouts';
 import { LoaderData } from './transformers/loader-data';
-import type { TransformOptions } from './types';
 import { PulsarModule } from './transformers/module';
+import type { TransformOptions } from './types';
 
 /**
  * Plugin to apply any transforms to the components

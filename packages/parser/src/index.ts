@@ -1,9 +1,7 @@
 import esquery from 'esquery';
 import * as acorn from 'acorn';
 import typescript from 'acorn-typescript';
-import type { GeneratorOptions } from '@babel/generator';
 import babelGenerate from '@babel/generator';
-import sourceMap from 'source-map';
 import type * as babel from '@babel/types';
 import type { State } from 'estree-util-to-js';
 import { jsx, toJs } from 'estree-util-to-js';
@@ -59,17 +57,12 @@ const generator = {
 	},
 };
 
-export function generate(
-	ast: acorn.Node | acorn.Program,
-	{ sourceFileName }: Pick<GeneratorOptions, 'sourceFileName'> = {}
-) {
+export function generate(ast: acorn.Node | acorn.Program) {
 	const result = toJs(ast as any, {
-		filePath: sourceFileName,
-		SourceMapGenerator: sourceMap.SourceMapGenerator,
 		handlers: generator,
 	});
 
-	return { code: result.value, map: result.map };
+	return result.value;
 }
 
 export * from './matchers';

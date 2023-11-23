@@ -39,8 +39,8 @@ export const ActionData: PulsarTransformer = {
 			}
 		}
 	},
-	transform({ ast }) {
-		return bindFunctionUsage(ast, Queries.USE_ACTION_DATA);
+	transform({ ast, string }) {
+		return bindFunctionUsage(ast, Queries.USE_ACTION_DATA, string);
 	},
 };
 

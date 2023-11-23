@@ -69,7 +69,6 @@
 		"acorn-typescript": "1.4.11",
 		"esquery": "1.5.0",
 		"estree-util-to-js": "2.0.0",
-		"estree-util-visit": "2.0.0",
-		"source-map": "0.7.4"
+		"estree-util-visit": "2.0.0"
 	}
 }

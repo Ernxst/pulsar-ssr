@@ -98,6 +98,7 @@
 		"@pulsarjs/parser": "workspace:*",
 		"@pulsarjs/runtime": "workspace:*",
 		"@types/mkdirp": "2.0.0",
+		"magic-string": "0.30.5",
 		"minimatch": "9.0.3",
 		"mkdirp": "3.0.1",
 		"tiny-glob": "0.2.9"

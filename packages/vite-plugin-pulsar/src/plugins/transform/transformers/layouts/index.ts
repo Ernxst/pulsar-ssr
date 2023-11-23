@@ -1,9 +1,9 @@
 import * as parser from '@pulsarjs/parser';
+import type { PulsarTransformer } from '../../types';
 import { addLayoutImports } from './utils/add-layout-imports';
 import { applyLayouts } from './utils/apply-layouts';
 import { getLayoutsForPage } from './utils/get-layouts-for-page';
 import { removeDefaultExport } from './utils/remove-default-export';
-import { PulsarTransformer } from '../../types';
 
 export interface Options {
 	ast: parser.Program;
@@ -17,7 +17,7 @@ const EXPORTED_PAGE_QUERY = 'ExportDefaultDeclaration';
 
 export const PulsarLayouts: PulsarTransformer = {
 	validate(_options) {},
-	transform({ ast, code, entry, routesDir, id }) {
+	transform({ ast, code, entry, routesDir, id, string }) {
 		const [page] = parser.match<parser.ExportDefaultDeclaration>(
 			ast,
 			EXPORTED_PAGE_QUERY
@@ -26,7 +26,7 @@ export const PulsarLayouts: PulsarTransformer = {
 		layouts.unshift(entry);
 
 		if (layouts.length && page) {
-			removeDefaultExport(page);
+			removeDefaultExport(page, string);
 
 			const pageProgram = parser.parse(code.slice(page.start, page.end));
 			const [identifier] = parser.match<parser.Identifier>(
@@ -34,9 +34,9 @@ export const PulsarLayouts: PulsarTransformer = {
 				'Identifier'
 			);
 			const pageIdentifier = identifier.name;
-			const layoutModules = addLayoutImports(ast, layouts, id, entry);
+			const layoutModules = addLayoutImports(ast, layouts, id, entry, string);
 
-			const wrapped = applyLayouts(pageIdentifier, layoutModules);
+			const wrapped = applyLayouts(pageIdentifier, layoutModules, string);
 			ast.body.push(...wrapped.body);
 		}
 

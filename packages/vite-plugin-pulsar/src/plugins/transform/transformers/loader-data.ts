@@ -4,6 +4,7 @@ import {
 	UnusedLoaderWarning,
 	warnToConsole,
 } from 'pulsar/internal';
+import type MagicString from 'magic-string';
 import type { PulsarTransformer } from '../types';
 
 // TODO: Use plugin context (this.error/this.warn)
@@ -47,12 +48,16 @@ export const LoaderData: PulsarTransformer = {
 			warnToConsole(warning);
 		}
 	},
-	transform({ ast }) {
-		return bindFunctionUsage(ast, Queries.USE_LOADER_DATA);
+	transform({ ast, string }) {
+		return bindFunctionUsage(ast, Queries.USE_LOADER_DATA, string);
 	},
 };
 
-export function bindFunctionUsage(ast: parser.Program, query: string) {
+export function bindFunctionUsage(
+	ast: parser.Program,
+	query: string,
+	string: MagicString
+) {
 	const nodes = parser.match(ast, query);
 	nodes.forEach((node) => {
 		const [callSite] = parser.match<parser.CallExpression>(
@@ -67,6 +72,7 @@ export function bindFunctionUsage(ast: parser.Program, query: string) {
 				node.arguments = boundNode.arguments as any;
 				// @ts-expect-error babel has slightly different types to Acorn
 				node.typeParameters = boundNode.typeParameters as any;
+				string.overwrite(node.start, node.end, parser.generate(node));
 			}
 		});
 	});

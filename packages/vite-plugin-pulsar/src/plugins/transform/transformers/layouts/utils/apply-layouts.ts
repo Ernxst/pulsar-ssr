@@ -1,8 +1,10 @@
 import * as parser from '@pulsarjs/parser';
+import type MagicString from 'magic-string';
 
 export function applyLayouts(
 	pageIdentifier: string,
-	layoutModules: { identifier: string }[]
+	layoutModules: { identifier: string }[],
+	string: MagicString
 ) {
 	const openComponents = layoutModules
 		.map(({ identifier }, idx) => {
@@ -30,15 +32,17 @@ export function applyLayouts(
 		})
 		.join('\n');
 
-	return parser.parse(`
+	const code = `
 export default function __Pulsar__Page__() {
 	const ${modifiedPageIdentifier} = ${pageIdentifier}.bind(this);
   return (
-		<>
+	<>
 		${openComponents}
 		${pageIndent}<${modifiedPageIdentifier} />
 		${closedComponents}
 	</>
   )
-}`);
+}`;
+	string.append(code);
+	return parser.parse(code);
 }

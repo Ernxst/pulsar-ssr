@@ -2,6 +2,7 @@ import fs from 'fs';
 import * as parser from '@pulsarjs/parser';
 import { matches, matchesRoute } from 'src/utils/matches';
 import type { Plugin } from 'vite';
+import MagicString from 'magic-string';
 import type { Options } from '../types';
 import { PulsarLayouts } from './transformers/layouts';
 import { ActionData } from './transformers/action-data';
@@ -71,6 +72,8 @@ export function pulsarTransform({
 				if (matchesRoute(id, routesDir)) transformers.push(PulsarLayouts);
 
 				let ast = parser.parse(code);
+
+				const string = new MagicString(code);
 				const options: TransformOptions = {
 					ast,
 					relativeId,
@@ -78,6 +81,7 @@ export function pulsarTransform({
 					code,
 					entry: virtualServerEntryId,
 					routesDir,
+					string,
 				};
 
 				for (const transformer of transformers) {
@@ -85,10 +89,8 @@ export function pulsarTransform({
 					ast = transformer.transform(options);
 				}
 
-				// TODO: Sourcemap isn't correct for root layout (WRONG FILE NAME)
-				// TODO: Sourcemap isn't correct for files with layouts (line numbers wrong cos of layout imports)
-				const result = parser.generate(ast, { sourceFileName: filePath });
-				return { code: result.code, map: result.map, ast };
+				const map = string.generateMap({ hires: true, file: filePath });
+				return { code: string.toString(), map, ast };
 			}
 		},
 	};

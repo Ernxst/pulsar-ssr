@@ -16,7 +16,7 @@ const Queries = {
 
 export const FormAction: PulsarTransformer = {
 	validate(_options) {},
-	transform({ code, ast, relativeId }) {
+	transform({ code, ast, relativeId, string }) {
 		const actions = getNamedFormActions(ast, code);
 		const formProps = getElementProps('form', code, ast, [
 			'formaction',
@@ -49,6 +49,8 @@ export const FormAction: PulsarTransformer = {
 							// @ts-expect-error slightly different types to Acorn
 							(attr) => !isPropNode(attr, 'method')
 						);
+
+					string.overwrite(node.start, node.end, parser.generate(node));
 				}
 
 				if (method) {
@@ -65,6 +67,7 @@ export const FormAction: PulsarTransformer = {
 							if (isPropNode(node, 'method')) {
 								// @ts-expect-error slightly different types to Acorn
 								node.value = parser.stringLiteral(PULSAR_FORM_ACTIONS_METHOD);
+								string.overwrite(node.start, node.end, parser.generate(node));
 							}
 						});
 					}
@@ -75,6 +78,7 @@ export const FormAction: PulsarTransformer = {
 					);
 
 					node.openingElement.attributes.push(methodAttribute);
+					string.overwrite(node.start, node.end, parser.generate(node));
 				}
 
 				parser.replace(ast, (node) => {
@@ -82,6 +86,7 @@ export const FormAction: PulsarTransformer = {
 						const actionEndpoint = createActionUrl(relativeId, formaction);
 						// @ts-expect-error slightly different types to Acorn
 						node.value = parser.stringLiteral(actionEndpoint);
+						string.overwrite(node.start, node.end, parser.generate(node));
 					}
 				});
 			}

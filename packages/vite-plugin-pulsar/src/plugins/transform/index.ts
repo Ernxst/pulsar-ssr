@@ -67,6 +67,9 @@ export function pulsarTransform({
 				const filePath = isRootLayout ? entry : id;
 				const relativeId = filePath.split(routesDir)[1];
 
+				const transformers = [PulsarModule, LoaderData, ActionData, FormAction];
+				if (matchesRoute(id, routesDir)) transformers.push(PulsarLayouts);
+
 				let ast = parser.parse(code);
 				const options: TransformOptions = {
 					ast,
@@ -77,19 +80,9 @@ export function pulsarTransform({
 					routesDir,
 				};
 
-				PulsarModule.validate(options);
-				LoaderData.validate(options);
-				ActionData.validate(options);
-				FormAction.validate(options);
-
-				ast = PulsarModule.transform(options);
-				ast = LoaderData.transform(options);
-				ast = ActionData.transform(options);
-				ast = FormAction.transform(options);
-
-				if (matchesRoute(id, routesDir)) {
-					PulsarLayouts.validate(options);
-					ast = PulsarLayouts.transform(options);
+				for (const transformer of transformers) {
+					transformer.validate(options);
+					ast = transformer.transform(options);
 				}
 
 				// TODO: Sourcemap isn't correct for root layout (WRONG FILE NAME)

@@ -11,4 +11,4 @@ export { transformPathToUrl } from './utils/url/transform-path-to-url';
 
 export * from './errors/errors';
 export * from './errors/warnings';
-export { warnToConsole, PulsarException } from './errors/utils';
+export { PulsarException } from './errors/utils';

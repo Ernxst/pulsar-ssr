@@ -4,10 +4,10 @@ import {
 	FormactionAndUnsupportedMethodWarning,
 	PULSAR_FORM_ACTIONS_METHOD,
 	createActionUrl,
-	warnToConsole,
 } from 'pulsar/internal';
 import type MagicString from 'magic-string';
-import type { PulsarTransformer } from '../types';
+import { nodeToLocation } from 'src/utils';
+import type { Logger, PulsarTransformer } from '../types';
 import { getElementProps } from '../utils';
 import { getNamedFormActions } from './action-data';
 
@@ -16,10 +16,10 @@ const Queries = {
 };
 
 export const FormAction: PulsarTransformer = {
-	validate(_options) { },
-	transform({ code, ast, relativeId, string }) {
-		const actions = getNamedFormActions(ast, code);
-		const formProps = getElementProps('form', code, ast, [
+	validate(_options) {},
+	transform({ ast, relativeId, string, logger }) {
+		const actions = getNamedFormActions(ast);
+		const formProps = getElementProps('form', ast, [
 			'formaction',
 			'action',
 			'method',
@@ -33,7 +33,14 @@ export const FormAction: PulsarTransformer = {
 			const method = props.method?.value;
 
 			if (formaction) {
-				validateFormActions({ ast, filePath: relativeId, formaction, actions });
+				validateFormActions({
+					ast,
+					filePath: relativeId,
+					formaction,
+					actions,
+					logger,
+					node,
+				});
 				let updateEntireNode = false;
 
 				// Action and form action is not allowed
@@ -42,9 +49,10 @@ export const FormAction: PulsarTransformer = {
 						filePath: relativeId,
 						formaction,
 						action,
+						loc: nodeToLocation(props.action!.propNode),
 					});
 
-					warnToConsole(warning);
+					logger.warn(warning);
 
 					node.openingElement.attributes =
 						node.openingElement.attributes.filter(
@@ -62,8 +70,10 @@ export const FormAction: PulsarTransformer = {
 							filePath: relativeId,
 							formaction,
 							method,
+							loc: nodeToLocation(props.method!.propNode),
 						});
-						warnToConsole(warning);
+
+						logger.warn(warning);
 
 						parser.replace(ast, (node) => {
 							if (isPropNode(node, 'method')) {
@@ -94,7 +104,7 @@ export const FormAction: PulsarTransformer = {
 				 * would have already replaced the string we are trying to update
 				 */
 				if (updateEntireNode) {
-					string.overwrite(node.start, node.end, parser.generate(node))
+					string.overwrite(node.start, node.end, parser.generate(node));
 				}
 			}
 		});
@@ -103,14 +113,18 @@ export const FormAction: PulsarTransformer = {
 	},
 };
 
-function updateChildNode(parent: parser.JSXAttribute, value: string, string: MagicString) {
-	const { start, end } = parent.value!
+function updateChildNode(
+	parent: parser.JSXAttribute,
+	value: string,
+	string: MagicString
+) {
+	const { start, end } = parent.value!;
 
-	const valueNode = parser.stringLiteral(value) as unknown as parser.Literal
+	const valueNode = parser.stringLiteral(value) as unknown as parser.Literal;
 	valueNode.start = start;
 	valueNode.end = end;
 
-	parent.value = valueNode
+	parent.value = valueNode;
 	string.overwrite(start, end, parser.generate(valueNode));
 }
 
@@ -130,12 +144,21 @@ function validateFormActions({
 	formaction,
 	ast,
 	actions,
+	logger,
+	node,
 }: {
 	ast: parser.Program;
 	formaction: string;
 	filePath: string;
 	actions: Set<string>;
+	logger: Logger;
+	node: parser.JSXElement;
 }) {
+	const [formActionsNode] = parser.match<parser.JSXAttribute>(
+		node,
+		'JSXAttribute[name.name=formaction]'
+	);
+
 	// Ensure consumer only references available actions
 	if (actions.size) {
 		if (!actions.has(formaction)) {
@@ -143,9 +166,10 @@ function validateFormActions({
 				.map((a) => `"${a}"`)
 				.join(', ');
 
-			throw new Error(
-				`A form in ${filePath} references form action "${formaction}" which does not exist in the exported actions exported in ${filePath}. The available actions are: [${validActions}].`
-			);
+			return logger.error({
+				message: `A form in ${filePath} references form action "${formaction}" which does not exist in the exported actions exported in ${filePath}. The available actions are: [${validActions}].`,
+				loc: nodeToLocation(formActionsNode),
+			});
 		}
 	} else {
 		// Check to see if the user forgot to export their actions
@@ -155,13 +179,15 @@ function validateFormActions({
 		);
 
 		if (nonExportedActions) {
-			throw new Error(
-				`You did not export the actions variable but are trying to use the form action "${formaction}".`
-			);
+			return logger.error({
+				message: `You did not export the actions variable but are trying to use the form action "${formaction}".`,
+				loc: nodeToLocation(formActionsNode),
+			});
 		} else {
-			throw new Error(
-				`No actions were defined in ${filePath} but the form action "${formaction}" was referenced in a form on the page.`
-			);
+			return logger.error({
+				message: `No actions were defined in ${filePath} but the form action "${formaction}" was referenced in a form on the page.`,
+				loc: nodeToLocation(formActionsNode),
+			});
 		}
 	}
 }

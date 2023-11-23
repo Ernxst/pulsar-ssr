@@ -6,7 +6,7 @@ export interface Warning extends ErrorOrWarning {
 	readonly type: 'WARNING';
 }
 
-interface WarningOptions {
+interface WarningOptions extends Pick<ErrorOrWarning, 'code' | 'loc'> {
 	/**
 	 * The source file where the warning was raised
 	 */
@@ -22,10 +22,14 @@ interface WarningOptions {
  * away at build time. We just want to make sure the user is aware
  * of this.
  */
-export function UnusedLoaderWarning({ filePath }: WarningOptions): Warning {
+export function UnusedLoaderWarning({
+	filePath,
+	...opts
+}: WarningOptions): Warning {
 	return createWarning({
-		code: 'UNUSED_LOADER',
-		overview: `Unused loader function.`,
+		...opts,
+		errorCode: 'UNUSED_LOADER',
+		message: `Unused loader function.`,
 		description: `A loader function was exported in file "${filePath}", but no usage of "useLoaderData" was found in the page. The loader will be stripped from the page.`,
 		docsLink: '/todo',
 	});
@@ -40,10 +44,12 @@ export function UnusedLoaderWarning({ filePath }: WarningOptions): Warning {
  */
 export function LoaderWithoutPageWarning({
 	filePath,
+	...opts
 }: WarningOptions): Warning {
 	return createWarning({
-		code: 'LOADER_WITHOUT_PAGE',
-		overview: `Unused loader function`,
+		...opts,
+		errorCode: 'LOADER_WITHOUT_PAGE',
+		message: `Unused loader function`,
 		description: `A loader function was exported in a file ("${filePath}") that does not export a page. If this function is for external use only, please consider renaming it.`,
 		docsLink: '/todo',
 	});
@@ -60,10 +66,12 @@ export function FormactionAndActionWarning({
 	filePath,
 	formaction,
 	action,
+	...opts
 }: WarningOptions & { action: string; formaction: string }): Warning {
 	return createWarning({
-		code: 'FORM_ACTION_AND_ACTION',
-		overview: `Cannot use both "formaction" and "action" attributes on the same form.`,
+		...opts,
+		errorCode: 'FORM_ACTION_AND_ACTION',
+		message: `Cannot use both "formaction" and "action" attributes on the same form.`,
 		description: `A form in "${filePath}" uses both formaction="${formaction}" and action="${action}" which is not allowed; the action="${action}" will be removed.`,
 		docsLink: '/todo',
 	});
@@ -80,10 +88,12 @@ export function FormactionAndUnsupportedMethodWarning({
 	filePath,
 	formaction,
 	method,
+	...opts
 }: WarningOptions & { formaction: string; method: string }): Warning {
 	return createWarning({
-		code: 'FORM_ACTION_AND_UNSUPPORTED_METHOD',
-		overview: `Cannot use method="${method}" when using a form action.`,
+		...opts,
+		errorCode: 'FORM_ACTION_AND_UNSUPPORTED_METHOD',
+		message: `Cannot use method="${method}" when using a form action.`,
 		description: `A form in "${filePath}" uses both formaction="${formaction}" and method="${method}" which is not allowed; The method "${method}" will be replaced with ${PULSAR_FORM_ACTIONS_METHOD}.`,
 		docsLink: '/todo',
 	});

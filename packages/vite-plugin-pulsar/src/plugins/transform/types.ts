@@ -1,5 +1,6 @@
 import type * as parser from '@pulsarjs/parser';
 import type MagicString from 'magic-string';
+import type { Plugin } from 'vite';
 
 export interface TransformOptions extends ValidateOptions {
 	/**
@@ -20,6 +21,21 @@ export interface TransformOptions extends ValidateOptions {
 	string: MagicString;
 }
 
+/** Do this instead of importing from rollup as it's not actually a dependency */
+type ThisArgument<T> = Extract<T, Callable> extends (
+	this: infer U,
+	...args: any[]
+) => any
+	? U
+	: unknown;
+type Callable = (...args: any[]) => any;
+type TransformPluginContext = ThisArgument<Plugin['transform']>;
+
+export type Logger = Pick<
+	TransformPluginContext,
+	'error' | 'info' | 'warn' | 'debug'
+>;
+
 export interface ValidateOptions {
 	/**
 	 * The absolute file path of the module
@@ -35,6 +51,7 @@ export interface ValidateOptions {
 	 * have been applied
 	 */
 	code: string;
+	logger: Logger;
 }
 
 export interface PulsarTransformer {

@@ -1,10 +1,15 @@
 export interface ErrorOrWarning {
-	readonly overview: string;
+	message: string;
 	/**
 	 * User friendly error/warning message
 	 */
 	readonly description: string;
-	readonly code: string;
+	/**
+	 * Source code
+	 */
+	readonly code?: string;
+	readonly loc?: { line: number; column: number };
+	readonly errorCode: string;
 	/**
 	 * Link to the docs, explaining the error or warning in
 	 * more detail and what can be done to fix it

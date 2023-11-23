@@ -82,6 +82,7 @@ export function pulsarTransform({
 					entry: virtualServerEntryId,
 					routesDir,
 					string,
+					logger: this,
 				};
 
 				for (const transformer of transformers) {

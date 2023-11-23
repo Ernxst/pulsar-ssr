@@ -25,23 +25,19 @@ ${this.infoLink ? `See ${this.infoLink} for more information.` : ''}
 	};
 }
 
-export function warnToConsole(warning: Warning) {
-	console.warn(warning.toString());
-}
-
 export class PulsarException extends Error implements PulsarError {
 	public readonly type = 'ERROR';
-	public readonly code: string;
-	public readonly overview: string;
+	public readonly errorCode: string;
+	public readonly message: string;
 	public readonly description: string;
 	public readonly docsLink: string;
 	public readonly infoLink?: string | undefined;
 
 	constructor(error: Omit<PulsarError, 'type' | 'toString'>, cause?: unknown) {
-		const { docsLink, infoLink, code, overview, description } = error;
+		const { docsLink, infoLink, errorCode: code, message, description } = error;
 
-		const message = `
-${code} ${overview}
+		const raw = `
+${code} ${message}
 ${description}
 Documentation: ${docsLink}
 ${infoLink ? `See ${infoLink} for more information.` : ''}
@@ -49,9 +45,9 @@ ${infoLink ? `See ${infoLink} for more information.` : ''}
 
 		super(message, { cause });
 
-		this.overview = overview;
+		this.message = raw;
 		this.description = description;
-		this.code = code;
+		this.errorCode = code;
 		this.docsLink = createDocsLink(docsLink);
 		this.infoLink = infoLink ? createDocsLink(infoLink) : undefined;
 	}

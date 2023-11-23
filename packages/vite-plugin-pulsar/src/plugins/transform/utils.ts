@@ -18,7 +18,6 @@ export function getElementProps<
 	const TProps extends string & keyof Pulsar.IntrinsicElements[TElement],
 >(
 	element: TElement,
-	code: string,
 	root: parser.Node,
 	propsToExtract: TProps[]
 ): {
@@ -31,11 +30,7 @@ export function getElementProps<
 	const elementNodes = parser.match<parser.JSXElement>(root, jsxQuery);
 	return elementNodes.map((elementNode) => {
 		const nodeStart = elementNode.start;
-		const nodeEnd = elementNode.end;
-		const nodeCode = code.slice(nodeStart, nodeEnd);
-
-		const ast = parser.parse(nodeCode);
-		const attrNodes = parser.match<parser.JSXAttribute>(ast, propQuery);
+		const attrNodes = parser.match<parser.JSXAttribute>(elementNode, propQuery);
 		const props = {} as MatchedProps<TElement, TProps>;
 
 		for (const propNode of attrNodes) {

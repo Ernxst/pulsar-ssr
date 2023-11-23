@@ -17,7 +17,7 @@ const EXPORTED_PAGE_QUERY = 'ExportDefaultDeclaration';
 
 export const PulsarLayouts: PulsarTransformer = {
 	validate(_options) {},
-	transform({ ast, code, entry, routesDir, id, string }) {
+	transform({ ast, entry, routesDir, id, string }) {
 		const [page] = parser.match<parser.ExportDefaultDeclaration>(
 			ast,
 			EXPORTED_PAGE_QUERY
@@ -28,15 +28,9 @@ export const PulsarLayouts: PulsarTransformer = {
 		if (layouts.length && page) {
 			removeDefaultExport(page, string);
 
-			const pageProgram = parser.parse(code.slice(page.start, page.end));
-			const [identifier] = parser.match<parser.Identifier>(
-				pageProgram,
-				'Identifier'
-			);
-			const pageIdentifier = identifier.name;
+			const [identifier] = parser.match<parser.Identifier>(page, 'Identifier');
 			const layoutModules = addLayoutImports(ast, layouts, id, entry, string);
-
-			const wrapped = applyLayouts(pageIdentifier, layoutModules, string);
+			const wrapped = applyLayouts(identifier.name, layoutModules, string);
 			ast.body.push(...wrapped.body);
 		}
 

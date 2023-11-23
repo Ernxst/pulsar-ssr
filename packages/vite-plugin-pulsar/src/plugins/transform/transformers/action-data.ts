@@ -1,4 +1,5 @@
 import * as parser from '@pulsarjs/parser';
+import { nodeToLocation } from 'src/utils';
 import type { PulsarTransformer } from '../types';
 import { bindFunctionUsage } from './loader-data';
 
@@ -13,29 +14,28 @@ const Queries = {
  * Validate and transform usages of `useActionData`
  */
 export const ActionData: PulsarTransformer = {
-	validate({ ast, code, relativeId }) {
-		const actions = getNamedFormActions(ast, code);
+	validate({ ast, relativeId, logger }) {
+		const actions = getNamedFormActions(ast);
 		const nodes = parser.match(ast, Queries.USE_ACTION_DATA);
 
 		if (nodes.length) {
 			if (actions.size) {
 				const unknownActions = nodes
-					.flatMap((node) => {
-						const subAst = parser.parse(code.slice(node.start, node.end));
-						return parser.match<parser.Literal>(subAst, 'Literal');
-					})
+					.flatMap((node) => parser.match<parser.Literal>(node, 'Literal'))
 					.filter((literal) => !actions.has(literal.value as string))
 					.map((action) => `"${action.value}"`);
 
 				if (unknownActions.length) {
-					throw new Error(
-						`useActionData was called ${unknownActions.length} times with unknown actions: ${unknownActions} in ${relativeId}`
-					);
+					return logger.error({
+						message: `useActionData was called ${unknownActions.length} times with unknown actions: ${unknownActions} in ${relativeId}`,
+						loc: nodeToLocation(nodes[0]),
+					});
 				}
 			} else {
-				throw new Error(
-					`You cannot call useActionData without exporting any actions in ${relativeId}`
-				);
+				return logger.error({
+					message: `You cannot call useActionData without exporting any actions in ${relativeId}`,
+					loc: nodeToLocation(nodes[0]),
+				});
 			}
 		}
 	},
@@ -44,20 +44,15 @@ export const ActionData: PulsarTransformer = {
 	},
 };
 
-export function getNamedFormActions(
-	ast: parser.Program,
-	code: string
-): Set<string> {
-	const [actionsNode] = parser.match<parser.ExportNamedDeclaration>(
+export function getNamedFormActions(ast: parser.Program): Set<string> {
+	const [node] = parser.match<parser.ExportNamedDeclaration>(
 		ast,
 		Queries.EXPORTED_ACTIONS
 	);
-	if (actionsNode) {
-		const subNode = parser.parse(
-			code.slice(actionsNode.start, actionsNode.end)
-		);
+
+	if (node) {
 		const [objExpr] = parser.match<parser.ObjectExpression>(
-			subNode,
+			node,
 			Queries.NAMED_ACTIONS
 		);
 

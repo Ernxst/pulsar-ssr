@@ -1,13 +1,8 @@
 import * as parser from '@pulsarjs/parser';
-import {
-	LoaderWithoutPageWarning,
-	UnusedLoaderWarning,
-	warnToConsole,
-} from 'pulsar/internal';
+import { LoaderWithoutPageWarning, UnusedLoaderWarning } from 'pulsar/internal';
 import type MagicString from 'magic-string';
+import { nodeToLocation } from 'src/utils';
 import type { PulsarTransformer } from '../types';
-
-// TODO: Use plugin context (this.error/this.warn)
 
 const Queries = {
 	USE_LOADER_DATA: `CallExpression:has(Identifier[name=useLoaderData])`,
@@ -18,15 +13,19 @@ const Queries = {
 };
 
 export const LoaderData: PulsarTransformer = {
-	validate({ ast, relativeId }) {
+	validate({ ast, relativeId, logger }) {
 		const [loader] = parser.match(ast, Queries.LOADER_FUNCTION);
 		const nodes = parser.match(ast, Queries.USE_LOADER_DATA);
 
 		if (loader) {
 			const [page] = parser.match(ast, Queries.PAGE);
 			if (!page) {
-				const warning = LoaderWithoutPageWarning({ filePath: relativeId });
-				warnToConsole(warning);
+				const warning = LoaderWithoutPageWarning({
+					filePath: relativeId,
+					loc: nodeToLocation(loader),
+				});
+
+				logger.warn(warning);
 			}
 		}
 
@@ -34,18 +33,24 @@ export const LoaderData: PulsarTransformer = {
 			if (!loader) {
 				const [nonExportedLoader] = parser.match(ast, Queries.LOCAL_LOADER);
 				if (nonExportedLoader) {
-					throw new Error(
-						`You are trying to call useLoaderData in ${relativeId} but have not exported the loader function.`
-					);
+					return logger.error({
+						message: `You are trying to call useLoaderData in ${relativeId} but have not exported the loader function.`,
+						loc: nodeToLocation(nodes[0]),
+					});
 				} else {
-					throw new Error(
-						`You cannot call useLoaderData without exporting a loader function in ${relativeId}`
-					);
+					return logger.error({
+						message: `You cannot call useLoaderData without exporting a loader function in ${relativeId}`,
+						loc: nodeToLocation(nodes[0]),
+					});
 				}
 			}
 		} else if (loader) {
-			const warning = UnusedLoaderWarning({ filePath: relativeId });
-			warnToConsole(warning);
+			const warning = UnusedLoaderWarning({
+				filePath: relativeId,
+				loc: nodeToLocation(loader),
+			});
+
+			return logger.warn(warning);
 		}
 	},
 	transform({ ast, string }) {

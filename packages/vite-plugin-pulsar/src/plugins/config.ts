@@ -3,7 +3,7 @@ import type { Plugin } from 'vite';
 export function pulsarConfig(): Plugin {
 	return {
 		name: 'pulsar-plugin-config',
-		async config() {
+		config() {
 			return {
 				appType: 'custom',
 				clearScreen: false,

@@ -1,6 +1,16 @@
 import { usePulsarContext } from './context';
 import type { PulsarLocation } from './types';
 
+/**
+ * Resolves a full URL against the current location to be used as an href to a
+ * link. If a relative path is supplied, it will resolve to a full URL.
+ */
+export function useHref(to: string): string {
+	const { origin } = useLocation();
+	to = to.startsWith("/") ? to : `/${to}`;
+	return `${origin}${to}`
+}
+
 /** @returns the current {@linkcode PulsarLocation} object. */
 export function useLocation(): PulsarLocation {
 	return usePulsarContext().location;

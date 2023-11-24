@@ -10,6 +10,6 @@ export interface PulsarPageContext {
 }
 
 export interface PulsarLocation
-	extends Pick<Location, 'search' | 'pathname' | 'hash'> {}
+	extends Pick<Location, 'search' | 'pathname' | 'hash' | 'origin'> {}
 
 export type Callable = (...args: any[]) => any;

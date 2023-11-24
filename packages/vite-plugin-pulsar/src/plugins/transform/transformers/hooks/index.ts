@@ -8,6 +8,7 @@ export function createHookESQuery(hookName: string) {
 const Queries = {
 	USE_LOCATION: createHookESQuery('useLocation'),
 	USE_PARAMS: createHookESQuery('useParams'),
+	USE_SEARCH_PARAMS: createHookESQuery('useSearchParams'),
 };
 
 /**

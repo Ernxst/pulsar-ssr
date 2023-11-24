@@ -1,8 +1,10 @@
+/// <reference lib="dom" />
 import type { PulsarLocation } from '.';
 
 export interface PulsarInternalContext {
 	location: PulsarLocation;
 	params: Record<string, string>;
+	searchParams: URLSearchParams;
 }
 
 const loaderDataSymbol = 'pulsar:loaderData'; // Symbol('pulsar:loaderData')

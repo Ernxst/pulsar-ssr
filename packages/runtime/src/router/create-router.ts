@@ -48,6 +48,7 @@ export function createPulsarRouter({ routes }: ServerBuild) {
 				const internal: PulsarInternalContext = {
 					location,
 					params: ctx.params,
+					searchParams: location.searchParams,
 				};
 
 				if (Page && method === 'GET') {

@@ -2,9 +2,10 @@ import * as parser from '@pulsarjs/parser';
 import { nodeToLocation } from 'src/utils';
 import type { PulsarTransformer } from '../types';
 import { bindFunctionUsage } from './loader-data';
+import { createHookESQuery } from './hooks';
 
 const Queries = {
-	USE_ACTION_DATA: `CallExpression:has(Identifier[name=useActionData])`,
+	USE_ACTION_DATA: createHookESQuery('useActionData'),
 	NAMED_ACTIONS: 'ObjectExpression:has(Property > Identifier)',
 	// This matches export const/let actions = {} and export { actions };
 	EXPORTED_ACTIONS: 'ExportNamedDeclaration:has(Identifier[name=actions])',

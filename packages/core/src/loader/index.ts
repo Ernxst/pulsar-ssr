@@ -1,4 +1,4 @@
-import { getLoaderData } from 'src/internal/utils/data';
+import { getLoaderData } from 'src/hooks/internal';
 import type { LoaderFunction, inferLoaderData } from './types';
 
 export type {

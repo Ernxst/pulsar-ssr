@@ -1,4 +1,4 @@
-import { getActionData } from 'src/internal/utils/data';
+import { getActionData } from 'src/hooks/internal';
 import type { ActionFunction, inferActionOutput } from './types';
 
 export type {

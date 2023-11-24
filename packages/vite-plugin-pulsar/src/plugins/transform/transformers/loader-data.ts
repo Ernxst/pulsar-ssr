@@ -3,9 +3,10 @@ import { LoaderWithoutPageWarning, UnusedLoaderWarning } from 'pulsar/internal';
 import type MagicString from 'magic-string';
 import { nodeToLocation } from 'src/utils';
 import type { PulsarTransformer } from '../types';
+import { createHookESQuery } from './hooks';
 
 const Queries = {
-	USE_LOADER_DATA: `CallExpression:has(Identifier[name=useLoaderData])`,
+	USE_LOADER_DATA: createHookESQuery('useLoaderData'),
 	LOADER_FUNCTION: `ExportNamedDeclaration:has(Identifier[name=loader])`,
 	LOCAL_LOADER:
 		'VariableDeclaration:has(Identifier[name=loader]):has(ArrowFunctionExpression), FunctionDeclaration:has(Identifier[name=loader])',

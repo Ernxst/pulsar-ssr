@@ -3,10 +3,12 @@ import { SmartRouter } from 'hono/router/smart-router';
 import { TrieRouter } from 'hono/router/trie-router';
 import { renderToReadableStream } from 'hono/jsx/streaming';
 import type { RouteFunctionArgs } from 'pulsar/route';
+import type { PulsarInternalContext } from 'pulsar/internal';
 import {
 	PULSAR_FORM_ACTIONS_ENDPOINT,
 	PULSAR_FORM_ACTIONS_METHOD,
 	setActionData,
+	setContext,
 	setLoaderData,
 } from 'pulsar/internal';
 import { notFound } from 'src/utils/not-found';
@@ -42,11 +44,21 @@ export function createPulsarRouter({ routes }: ServerBuild) {
 				} = await loadModule();
 
 				const method = ctx.request.method.toUpperCase() as HTTPMethod;
+				const location = new URL(ctx.request.url);
+				const internal: PulsarInternalContext = {
+					location,
+					params: ctx.params,
+				};
 
 				if (Page && method === 'GET') {
+					setContext(Page, internal);
+
 					if (loader) {
+						// Loaders and handlers don't really need this, but why not
+						setContext(loader, internal);
+
 						// Loader is executed with the page, not on a separate route
-						const loaderData = await loader(ctx);
+						const loaderData = await loader.bind(loader)(ctx);
 						// No reason to set if there wasn't a loader - compiler already
 						// catches invalid usages of useLoaderData
 						setLoaderData(Page, loaderData);
@@ -71,7 +83,8 @@ export function createPulsarRouter({ routes }: ServerBuild) {
 
 				const handle = handlers[method];
 				if (handle) {
-					return await handle(ctx);
+					setContext(handle, internal);
+					return await handle.bind(handle)(ctx);
 				}
 
 				return notFound(ctx.request.url);
@@ -96,7 +109,7 @@ export function createPulsarRouter({ routes }: ServerBuild) {
 			if (!handler)
 				throw new Error(`Unknown form action "${action}" for file ${file}`);
 
-			const actionData = await handler(context);
+			const actionData = await handler.bind(handler)(context);
 			/**
 			 * We allow actions without a page in case other pages/routes want to
 			 * call these actions

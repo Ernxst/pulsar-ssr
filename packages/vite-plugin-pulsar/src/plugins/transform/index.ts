@@ -10,6 +10,7 @@ import { PulsarLayouts } from './transformers/layouts';
 import { LoaderData } from './transformers/loader-data';
 import { PulsarModule } from './transformers/module';
 import type { TransformOptions } from './types';
+import { PulsarHooks } from './transformers/hooks';
 
 /**
  * Plugin to apply any transforms to the components
@@ -65,7 +66,13 @@ export function pulsarTransform({ routesDir, entry }: Options): Plugin {
 				const filePath = isRootLayout ? entry : id;
 				const relativeId = filePath.split(routesDir)[1];
 
-				const transformers = [PulsarModule, LoaderData, ActionData, FormAction];
+				const transformers = [
+					PulsarModule,
+					PulsarHooks,
+					LoaderData,
+					ActionData,
+					FormAction,
+				];
 				if (matchesRoute(id, routesDir)) transformers.push(PulsarLayouts);
 
 				let ast = parser.parse(code);

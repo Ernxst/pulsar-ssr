@@ -13,6 +13,10 @@ type MatchedProps<
 	};
 };
 
+export function createHookESQuery(hookName: string) {
+	return `CallExpression:has(Identifier[name=${hookName}])`;
+}
+
 export function getElementProps<
 	const TElement extends string & keyof Pulsar.IntrinsicElements,
 	const TProps extends string & keyof Pulsar.IntrinsicElements[TElement],

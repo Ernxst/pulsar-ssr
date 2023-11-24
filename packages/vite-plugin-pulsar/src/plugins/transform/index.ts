@@ -10,7 +10,7 @@ import { PulsarLayouts } from './transformers/layouts';
 import { LoaderData } from './transformers/loader-data';
 import { PulsarModule } from './transformers/module';
 import type { TransformOptions } from './types';
-import { PulsarHooks } from './transformers/hooks';
+import { PulsarContext } from './transformers/context';
 
 /**
  * Plugin to apply any transforms to the components
@@ -61,19 +61,15 @@ export function pulsarTransform({ routesDir, entry }: Options): Plugin {
 		},
 		async transform(code, id) {
 			const isRootLayout = id === virtualServerEntryId;
+			const isRoute = matchesRoute(id, routesDir);
 
 			if (matches(id, routesDir) || isRootLayout) {
 				const filePath = isRootLayout ? entry : id;
 				const relativeId = filePath.split(routesDir)[1];
 
-				const transformers = [
-					PulsarModule,
-					PulsarHooks,
-					LoaderData,
-					ActionData,
-					FormAction,
-				];
-				if (matchesRoute(id, routesDir)) transformers.push(PulsarLayouts);
+				const transformers = [PulsarModule, LoaderData, ActionData, FormAction];
+				if (isRoute) transformers.push(PulsarLayouts);
+				transformers.push(PulsarContext);
 
 				let ast = parser.parse(code);
 
@@ -94,8 +90,21 @@ export function pulsarTransform({ routesDir, entry }: Options): Plugin {
 					ast = transformer.transform(options);
 				}
 
+				let transformed = string.toString();
+				/**
+				 * When transforming a route, we add a default export when applying layouts
+				 * and when applying context - two default exports which is not allowed.
+				 *
+				 * In magic-string, there is no way to target generated code, only the
+				 * original, so there's no way of removing the export produced by
+				 * applying layouts, so we do it manually instead.
+				 */
+				if (isRoute) {
+					transformed = transformed.replace(/^export default/m, 'export');
+				}
+
 				const map = string.generateMap({ hires: true, file: filePath });
-				return { code: string.toString(), map, ast };
+				return { code: transformed, map, ast };
 			}
 		},
 	};

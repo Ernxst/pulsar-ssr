@@ -1,12 +1,20 @@
 import * as parser from '@pulsarjs/parser';
 import type MagicString from 'magic-string';
 
-export function removeDefaultExport(
-	node: parser.ExportDefaultDeclaration,
+const target = 'export default';
+
+export function removeDefaultExportKeyword(
+	ast: parser.Program,
+	code: string,
 	string: MagicString
 ) {
-	(node as unknown as parser.ExportNamedDeclaration).type =
-		'ExportNamedDeclaration';
+	parser.replace(ast, (node) => {
+		if (parser.isExportDefaultDeclaration(node)) {
+			const index = code.indexOf('export default');
+			string.overwrite(index, index + target.length, 'export');
 
-	string.overwrite(node.start, node.end, parser.generate(node));
+			(node as unknown as parser.ExportNamedDeclaration).type =
+				'ExportNamedDeclaration';
+		}
+	});
 }

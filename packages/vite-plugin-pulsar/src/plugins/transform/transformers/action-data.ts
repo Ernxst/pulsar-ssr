@@ -1,8 +1,7 @@
 import * as parser from '@pulsarjs/parser';
 import { nodeToLocation } from 'src/utils';
 import type { PulsarTransformer } from '../types';
-import { bindFunctionUsage } from './loader-data';
-import { createHookESQuery } from './hooks';
+import { createHookESQuery } from '../utils';
 
 const Queries = {
 	USE_ACTION_DATA: createHookESQuery('useActionData'),
@@ -40,8 +39,8 @@ export const ActionData: PulsarTransformer = {
 			}
 		}
 	},
-	transform({ ast, string }) {
-		return bindFunctionUsage(ast, Queries.USE_ACTION_DATA, string);
+	transform({ ast }) {
+		return ast;
 	},
 };
 

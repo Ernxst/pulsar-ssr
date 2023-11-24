@@ -15,12 +15,6 @@ export function applyLayouts(
 		.join('\n')
 		.trimStart();
 
-	/**
-	 * We need to bind it because the return values of useLoaderData and
-	 * useActionData will be set on the function. Now that we are exporting a
-	 * different function, we make sure the page is bound to the same scope
-	 */
-	const modifiedPageIdentifier = `Page__${pageIdentifier}_1`;
 	const pageIndent = '  '.repeat(layoutModules.length);
 
 	const closedComponents = layoutModules
@@ -33,12 +27,11 @@ export function applyLayouts(
 		.join('\n');
 
 	const code = `
-export default function __Pulsar__Page__() {
-	const ${modifiedPageIdentifier} = ${pageIdentifier}.bind(this);
+export default function Page_${pageIdentifier}() {
   return (
 	<>
 		${openComponents}
-		${pageIndent}<${modifiedPageIdentifier} />
+		${pageIndent}<${pageIdentifier} />
 		${closedComponents}
 	</>
   )

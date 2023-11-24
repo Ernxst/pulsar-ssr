@@ -38,3 +38,9 @@ export function isCallExpression(node: any): node is types.CallExpression {
 export function isIdentifier(node: any): node is types.Identifier {
 	return babel.isIdentifier(node);
 }
+
+export function isExportDefaultDeclaration(
+	node: any
+): node is types.ExportDefaultDeclaration {
+	return babel.isExportDefaultDeclaration(node);
+}

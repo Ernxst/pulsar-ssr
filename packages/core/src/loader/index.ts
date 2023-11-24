@@ -1,4 +1,4 @@
-import { getLoaderData } from 'src/hooks/internal';
+import { usePageContext } from 'src/hooks/context';
 import type { LoaderFunction, inferLoaderData } from './types';
 
 export type {
@@ -10,7 +10,5 @@ export type {
 export function useLoaderData<
 	TLoader extends LoaderFunction<any, any, any>,
 >(): inferLoaderData<TLoader> {
-	// @ts-expect-error it's fine
-	// eslint-disable-next-line @typescript-eslint/no-invalid-this
-	return getLoaderData.bind(this)(this);
+	return usePageContext().loaderData.value;
 }

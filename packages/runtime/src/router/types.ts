@@ -1,6 +1,6 @@
 import type { Actions } from 'pulsar/actions';
 import type { LoaderFunction } from 'pulsar/loader';
-import type { RouteFunction } from 'pulsar/route';
+import type { RouteFunction, RouteFunctionArgs } from 'pulsar/route';
 
 export type HTTPMethod =
 	| 'DELETE'
@@ -29,5 +29,5 @@ export type PulsarModule = {
 	/**
 	 * page component
 	 */
-	default?: () => any;
+	default?: (params: { context: RouteFunctionArgs; loaderData: any }) => any;
 };

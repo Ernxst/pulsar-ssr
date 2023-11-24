@@ -1,9 +1,8 @@
 import * as parser from '@pulsarjs/parser';
 import { LoaderWithoutPageWarning, UnusedLoaderWarning } from 'pulsar/internal';
-import type MagicString from 'magic-string';
 import { nodeToLocation } from 'src/utils';
 import type { PulsarTransformer } from '../types';
-import { createHookESQuery } from './hooks';
+import { createHookESQuery } from '../utils';
 
 const Queries = {
 	USE_LOADER_DATA: createHookESQuery('useLoaderData'),
@@ -54,64 +53,7 @@ export const LoaderData: PulsarTransformer = {
 			return logger.warn(warning);
 		}
 	},
-	transform({ ast, string }) {
-		return bindFunctionUsage(ast, Queries.USE_LOADER_DATA, string);
+	transform({ ast }) {
+		return ast;
 	},
 };
-
-export function bindFunctionUsage(
-	ast: parser.Program,
-	query: string,
-	string: MagicString
-) {
-	const nodes = parser.match(ast, query);
-	nodes.forEach((node) => {
-		const [callSite] = parser.match<parser.CallExpression>(
-			node,
-			'CallExpression'
-		);
-
-		parser.replace(ast, (node) => {
-			if (parser.isCallExpression(node) && node === callSite) {
-				const boundNode = createBoundFunction(callSite);
-				node.callee = boundNode.callee as any;
-				node.arguments = boundNode.arguments as any;
-				// @ts-expect-error babel has slightly different types to Acorn
-				node.typeParameters = boundNode.typeParameters as any;
-				string.overwrite(node.start, node.end, parser.generate(node));
-			}
-		});
-	});
-
-	return ast;
-}
-
-function createBoundFunction(node: parser.CallExpression) {
-	const identifier = (node.callee as parser.Identifier).name;
-	const memberExpression = parser.memberExpression(
-		parser.identifier(identifier),
-		parser.identifier('bind')
-	);
-
-	const bindExpression = parser.callExpression(memberExpression, [
-		parser.thisExpression(),
-	]);
-
-	/**
-	 * The only usages of bindFunctionUsage is to transform useLoaderData and
-	 * useActionData. Therefore, if the arg is a literal, it is only possible for
-	 * it to be a string literal (in useActionData)
-	 *
-	 * This transform is required because the
-	 */
-	const args = node.arguments.map((n) =>
-		parser.isLiteral(n) ? parser.stringLiteral(n.value as string) : n
-	);
-
-	// @ts-expect-error babel has slightly different types to Acorn
-	const expr = parser.callExpression(bindExpression, args);
-	// @ts-expect-error babel has slightly different types to Acorn
-	expr.typeParameters = node.typeParameters;
-
-	return expr;
-}

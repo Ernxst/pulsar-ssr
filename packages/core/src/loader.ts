@@ -1,8 +1,8 @@
-import { usePageContext } from 'src/hooks/context';
+import type { Runtime } from 'hono/adapter';
 import type { CookieOptions } from 'hono/utils/cookie';
 import type { cacheHeader } from 'pretty-cache-header';
 import type { QueryParams, UrlPath, inferPathParams } from 'src/types';
-import type { Runtime } from 'hono/adapter';
+import { usePage } from './internal/context/hooks';
 
 declare global {
 	namespace Pulsar {
@@ -113,5 +113,5 @@ export type inferLoaderData<TLoader extends LoaderFunction<any, any, any>> =
 export function useLoaderData<
 	TLoader extends LoaderFunction<any, any, any>,
 >(): inferLoaderData<TLoader> {
-	return usePageContext().loaderData.value;
+	return usePage().loaderData.value;
 }

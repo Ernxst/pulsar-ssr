@@ -8,27 +8,18 @@ import { removeDefaultExportKeyword } from '../layouts/utils/remove-default-expo
 const EXPORTED_PAGE_QUERY = 'ExportDefaultDeclaration';
 
 export const PulsarContext: PulsarTransformer = {
-	validate() {},
-	transform({ ast, code, string, id, entry, routesDir }) {
+	validate() { },
+	transform({ ast, code, string, id, routesDir }) {
+		const isPage = matchesRoute(id, routesDir)
 		const [page] = parser.match<parser.ExportDefaultDeclaration>(
 			ast,
 			EXPORTED_PAGE_QUERY
 		);
 
-		if (page) {
+		if (page && isPage) {
 			addContextImports(ast, string);
 			removeDefaultExportKeyword(ast, code, string);
-			wrapInContext({
-				ast,
-				string,
-				page,
-				type:
-					id === entry
-						? 'ROOT'
-						: matchesRoute(id, routesDir)
-						? 'PAGE'
-						: 'LAYOUT',
-			});
+			wrapInContext({ ast, string, page });
 		}
 
 		return ast;
@@ -39,20 +30,16 @@ function addContextImports(ast: parser.Program, string: MagicString) {
 	const node = parser.importDeclaration(
 		[
 			parser.importSpecifier(
-				parser.identifier('PageContext'),
-				parser.identifier('PageContext')
+				parser.identifier('Page'),
+				parser.identifier('Page')
 			),
 			parser.importSpecifier(
-				parser.identifier('RootContext'),
-				parser.identifier('RootContext')
+				parser.identifier('Route'),
+				parser.identifier('Route')
 			),
 			parser.importSpecifier(
-				parser.identifier('RouterContext'),
-				parser.identifier('RouterContext')
-			),
-			parser.importSpecifier(
-				parser.identifier('useRouterContext'),
-				parser.identifier('useRouterContext')
+				parser.identifier('Url'),
+				parser.identifier('Url')
 			),
 		],
 		parser.stringLiteral('pulsar/internal')
@@ -73,43 +60,33 @@ function wrapInContext({
 	ast,
 	string,
 	page,
-	type,
 }: {
 	ast: parser.Program;
 	string: MagicString;
 	page: parser.ExportDefaultDeclaration;
-	type: 'ROOT' | 'PAGE' | 'LAYOUT';
 }) {
 	const [{ name }] = parser.match<parser.Identifier>(page, 'Identifier');
 	const raw = [];
-	const componentJsx = `<RootContext>
-	<PageContext loaderData={loaderData}>
-		<${name}>
-			{children}
-		</${name}>
-	</PageContext>
-</RootContext>`;
+	const componentJsx = `<${name}>{children}</${name}>`;
 
 	raw.push(
-		`export default function Pulsar${name}({ context, loaderData, children }) {`
+		`export default function Page_${name}({ children, context, loaderData }) {`
 	);
-	raw.push(indent(`context = context ?? useRouterContext()`, 1));
+	raw.push(indent(`console.log({ context, loaderData })`, 1));
 	raw.push(indent(`return (`, 1));
-
-	if (type === 'ROOT') {
-		raw.push(indent(componentJsx, 2));
-	} else {
-		raw.push(indent('<RouterContext.Provider value={context}>', 2));
-		raw.push(indent(componentJsx, 3));
-		raw.push(indent('</RouterContext.Provider>', 2));
-	}
-
+	raw.push(indent('<Route.Provider value={context}>', 2));
+	raw.push(indent('<Url.Provider>', 3));
+	raw.push(indent('<Page.Provider value={loaderData}>', 4));
+	raw.push(indent(componentJsx, 5));
+	raw.push(indent('</Page.Provider>', 4));
+	raw.push(indent('</Url.Provider>', 3));
+	raw.push(indent('</Route.Provider>', 2));
 	raw.push(indent(')', 1));
 	raw.push('}');
 
 	const code = raw.join('\n');
 
 	string.append(`\n\n${code}`);
-	const wrapped = parser.parse(code);
-	ast.body.push(...wrapped.body);
+	const { body } = parser.parse(code);
+	ast.body.push(...body);
 }

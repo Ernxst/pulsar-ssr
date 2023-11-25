@@ -1,4 +1,5 @@
-import { usePulsarContext } from './context';
+/// <reference lib="dom" />
+import { useURL } from 'src/internal/context/hooks';
 import type { PulsarLocation } from './types';
 
 /**
@@ -13,11 +14,11 @@ export function useHref(to: string): string {
 
 /** @returns the current {@linkcode PulsarLocation} object. */
 export function useLocation(): PulsarLocation {
-	return usePulsarContext().location;
+	return useURL().location;
 }
 
 export function useParams(): Record<string, string> {
-	return usePulsarContext().params;
+	return useURL().params;
 }
 
 type State<T> = [T, Setter<T>];
@@ -28,7 +29,7 @@ function isServer() {
 }
 
 function getQueryIsomorphic() {
-	return usePulsarContext().searchParams;
+	return useURL().searchParams;
 }
 
 function updateQuery(updated: URLSearchParams) {

@@ -1,6 +1,6 @@
-import { usePageContext } from 'src/hooks/context';
 import type { LoaderFunctionArgs } from 'src/loader';
 import type { QueryParams, UrlPath } from 'src/types';
+import { usePage } from './internal/context/hooks';
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 type AnyString = string & {};
@@ -48,5 +48,5 @@ export function useActionData<
 >(
 	action: string & keyof TActions
 ): Awaited<inferActionOutput<TActions[typeof action]>> {
-	return usePageContext().actionData.get(action);
+	return usePage().actionData.get(action);
 }

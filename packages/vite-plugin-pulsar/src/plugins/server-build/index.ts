@@ -1,5 +1,6 @@
 import type { Adapter } from 'src/adapters';
 import type { Plugin } from 'vite';
+import MagicString from 'magic-string';
 import type { Options } from '../types';
 import { createServerEntry } from './create-server-entry';
 
@@ -35,7 +36,10 @@ export function pulsarServerBuild({
 					relative: input.split(routesDir)[1],
 				}));
 
-				return createServerEntry({ routes: config, adapter });
+				const code = createServerEntry({ routes: config, adapter });
+				const string = new MagicString(code);
+
+				return { code, map: string.generateMap({ hires: 'boundary' }) };
 			}
 		},
 	};

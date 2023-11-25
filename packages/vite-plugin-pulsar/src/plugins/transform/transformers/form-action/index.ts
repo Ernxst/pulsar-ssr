@@ -1,7 +1,10 @@
 import * as parser from '@pulsarjs/parser';
 import { nodeToLocation } from 'src/utils';
 import { PULSAR_FORM_ACTIONS_METHOD, createActionUrl } from '@pulsarjs/runtime';
-import { FormactionAndActionWarning, FormactionAndUnsupportedMethodWarning } from 'pulsar/internal';
+import {
+	FormactionAndActionWarning,
+	FormactionAndUnsupportedMethodWarning,
+} from 'pulsar/internal';
 import type { PulsarTransformer } from '../../types';
 import { getElementProps } from '../../utils';
 import { getNamedFormActions } from '../action-data';

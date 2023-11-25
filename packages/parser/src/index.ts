@@ -93,6 +93,8 @@ export {
 	returnStatement,
 	variableDeclaration,
 	exportDefaultDeclaration,
+	exportNamedDeclaration,
+	exportSpecifier,
 	functionDeclaration,
 	variableDeclarator,
 	jsxElement,

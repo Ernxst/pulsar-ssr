@@ -76,7 +76,7 @@ export function pulsarDev({ routes, routesDir, entry }: Options): Plugin {
 					serve({
 						routes,
 						routesDir,
-						server: vite,
+						config: vite.config,
 						loadModule: vite.ssrLoadModule,
 					})
 				);

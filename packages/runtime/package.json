@@ -75,7 +75,9 @@
 	"devDependencies": {
 		"@types/node": "18.18.8",
 		"@types/set-cookie-parser": "2.4.6",
+		"fast-querystring": "1.1.2",
 		"hono": "3.10.0",
+		"pretty-cache-header": "1.0.0",
 		"set-cookie-parser": "2.6.0"
 	}
 }

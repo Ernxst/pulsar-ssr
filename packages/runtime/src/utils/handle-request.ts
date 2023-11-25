@@ -1,9 +1,9 @@
-import type { Redirect } from 'pulsar/internal';
-import { isRedirect } from 'pulsar/internal';
 import { isNotFound } from 'src/utils/not-found';
 import type { SmartRouter } from 'hono/router/smart-router';
 import type { RouteHandler } from 'src/router/types';
 import { render } from './render';
+import type { Redirect } from './redirect';
+import { isRedirect } from './redirect';
 
 interface HandleOptions {
 	router: SmartRouter<RouteHandler>;

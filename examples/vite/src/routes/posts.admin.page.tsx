@@ -1,4 +1,4 @@
-import { redirect } from 'pulsar';
+// import { redirect } from 'pulsar';
 import { type ActionFunctionArgs, useActionData } from 'pulsar/actions';
 
 const inputClassName =
@@ -76,6 +76,6 @@ export const actions = {
 
 		// await createPost({ title, slug, markdown });
 
-		throw redirect('/welcome');
+		// throw redirect('/welcome');
 	},
 };

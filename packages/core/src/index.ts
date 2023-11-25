@@ -8,7 +8,5 @@ export type {
 
 export type { Runtime } from 'hono/adapter';
 
-export { redirect, type RedirectStatus } from 'src/internal/utils/redirect';
-
 export { useLocation, useSearchParams, useParams, useHref } from './hooks';
 export type { PulsarLocation } from './hooks/types';

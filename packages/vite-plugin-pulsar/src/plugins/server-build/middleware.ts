@@ -1,19 +1,19 @@
 import { createRequestHandler } from '@pulsarjs/node';
 import type { PulsarModule } from '@pulsarjs/runtime';
 import { transformPathToUrl } from 'pulsar/internal';
-import type { Connect, ViteDevServer } from 'vite';
+import type { Connect, ResolvedConfig } from 'vite';
 
 interface Options {
 	routes: string[];
 	routesDir: string;
-	server: ViteDevServer;
+	config: ResolvedConfig;
 	loadModule: (path: string) => Promise<PulsarModule>;
 }
 
 export function serve({
 	routes,
 	routesDir,
-	server,
+	config,
 	loadModule,
 }: Options): Connect.NextHandleFunction {
 	const entries = routes.map((entry) => {
@@ -41,7 +41,7 @@ export function serve({
 
 	return async function middleware(req, res, next) {
 		try {
-			const protocol = server.config.server.https ? 'https' : 'http';
+			const protocol = config.server.https ? 'https' : 'http';
 			const host = req.headers[':authority'] ?? req.headers.host;
 			const base = `${protocol}://${host}`;
 

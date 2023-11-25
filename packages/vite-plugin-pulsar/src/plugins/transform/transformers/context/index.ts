@@ -30,9 +30,7 @@ export const PulsarContext: PulsarTransformer = {
 
 function addContextImports(ast: parser.Program, string: MagicString) {
 	const node = parser.importDeclaration(
-		[
-				parser.importNamespaceSpecifier(parser.identifier(IDENTIFIER)),
-		],
+		[parser.importNamespaceSpecifier(parser.identifier(IDENTIFIER))],
 		parser.stringLiteral('pulsar/internal')
 	);
 

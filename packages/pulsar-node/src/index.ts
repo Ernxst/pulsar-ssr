@@ -1,5 +1,5 @@
 import type { IncomingMessage, ServerResponse } from 'node:http';
-import fs from "node:fs";
+import fs from 'node:fs';
 import { env, getRuntimeKey } from 'hono/adapter';
 import {
 	type ServerBuild,

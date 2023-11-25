@@ -1,28 +1,9 @@
 /// <reference lib="dom" />
-
-interface LogMessage {
-	type: 'LOG';
-	message: string;
-}
-
-interface ReloadMessage {
-	type: 'RELOAD';
-	endpoint: string;
-	path: string;
-}
-
-interface HmrMessage {
-	type: 'HMR';
-}
-
-interface ConnectedMessage {
-	type: 'connected';
-}
-
-type Message = LogMessage | ReloadMessage | HmrMessage | ConnectedMessage;
+import type { WsMessage } from 'src/internal/hmr/types';
 
 function liveReloadConnect(config?: { onOpen: () => any }) {
 	console.debug('[vite] connecting...');
+
 	const protocol = String(process.env.PULSAR_HMR_PROTOCOL);
 	const hostname = window.location.hostname;
 	const url = new URL(`${protocol}//${hostname}/socket`);
@@ -30,13 +11,13 @@ function liveReloadConnect(config?: { onOpen: () => any }) {
 
 	const ws = new WebSocket(url.href);
 	ws.onmessage = (message) => {
-		const event = JSON.parse(message.data) as Message;
+		const event = JSON.parse(message.data) as WsMessage;
 		if (event.type === 'connected') {
 			console.debug('[vite] connected.');
 		} else if (event.type === 'LOG') {
 			console.log(event.message);
 		} else if (event.type === 'RELOAD') {
-			if (window.location.pathname === event.endpoint) {
+			if (event.force || window.location.pathname === event.path) {
 				console.log('💿 Reloading window ...');
 				window.location.reload();
 			} else {

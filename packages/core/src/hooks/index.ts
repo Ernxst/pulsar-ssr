@@ -7,8 +7,8 @@ import type { PulsarLocation } from './types';
  */
 export function useHref(to: string): string {
 	const { origin } = useLocation();
-	to = to.startsWith("/") ? to : `/${to}`;
-	return `${origin}${to}`
+	to = to.startsWith('/') ? to : `/${to}`;
+	return `${origin}${to}`;
 }
 
 /** @returns the current {@linkcode PulsarLocation} object. */

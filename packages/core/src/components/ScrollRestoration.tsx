@@ -4,7 +4,8 @@ import 'src/jsx';
 
 const STORAGE_KEY = 'positions';
 
-export interface ScrollRestorationProps extends Pick<Pulsar.HTMLScriptAttributes, 'nonce'> {}
+export interface ScrollRestorationProps
+	extends Pick<Pulsar.HTMLScriptAttributes, 'nonce'> {}
 
 export function ScrollRestoration({ nonce }: ScrollRestorationProps) {
 	function restoreScroll(STORAGE_KEY: string, restoreKey: string) {

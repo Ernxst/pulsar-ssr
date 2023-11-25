@@ -1,6 +1,6 @@
 import { createRouteContext, isRedirect } from 'pulsar/internal';
 import { createResponse } from 'src/router/create-response';
-import type { RouteHandler } from 'src/router/create-router';
+import type { RouteHandler } from 'src/router/types';
 import { handleRedirect } from './handle-request';
 
 interface RenderOptions {

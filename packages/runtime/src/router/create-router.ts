@@ -1,22 +1,25 @@
 import { RegExpRouter } from 'hono/router/reg-exp-router';
 import { SmartRouter } from 'hono/router/smart-router';
 import { TrieRouter } from 'hono/router/trie-router';
+import { getFilePath } from 'hono/utils/filepath';
 import { renderToReadableStream } from 'hono/jsx/streaming';
-import type { RouteFunctionArgs } from 'pulsar/route';
 import {
 	PULSAR_FORM_ACTIONS_ENDPOINT,
 	PULSAR_FORM_ACTIONS_METHOD,
 	setActionData,
 } from 'pulsar/internal';
 import { notFound } from 'src/utils/not-found';
-import type { HTTPMethod, ServerBuild } from './types';
+import type {
+	AssetHandler,
+	HTTPMethod,
+	RouteHandler,
+	ServerBuild,
+} from './types';
 
-export interface RouteHandler {
-	path: string;
-	handle: (context: RouteFunctionArgs) => Promise<any>;
-}
-
-export function createPulsarRouter({ routes }: ServerBuild) {
+export function createPulsarRouter(
+	{ routes, assets }: ServerBuild,
+	getAsset: AssetHandler
+) {
 	const router = new SmartRouter<RouteHandler>({
 		routers: [new RegExpRouter(), new TrieRouter()],
 	});
@@ -98,6 +101,29 @@ export function createPulsarRouter({ routes }: ServerBuild) {
 			return actionData;
 		},
 	});
+
+	// Let vite handle assets in dev
+	if (process.env.NODE_ENV !== 'development') {
+		/** If we have the files ahead of time, we can register them */
+		const files = assets.files.length ? assets.files : [`/${assets.url}/*`];
+
+		const handle: RouteHandler['handle'] = async (ctx) => {
+			const { pathname } = new URL(ctx.request.url);
+			const filePath = getFilePath({ filename: pathname }) ?? pathname;
+			const response = await getAsset(filePath, ctx);
+			if (response) return response;
+
+			return notFound(ctx.request.url);
+		};
+
+		files.forEach((assetFile) => {
+			const path = assetFile.replaceAll('//', '/');
+			router.add('GET', path, { path, handle });
+		});
+
+		// For assets in the public dir
+		router.add('GET', '*', { path: '*', handle });
+	}
 
 	return router;
 }

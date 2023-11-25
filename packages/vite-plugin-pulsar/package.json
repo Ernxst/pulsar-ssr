@@ -96,6 +96,7 @@
 	},
 	"devDependencies": {
 		"@pulsarjs/parser": "workspace:*",
+		"@pulsarjs/node": "workspace:*",
 		"@pulsarjs/runtime": "workspace:*",
 		"@types/mkdirp": "2.0.0",
 		"magic-string": "0.30.5",

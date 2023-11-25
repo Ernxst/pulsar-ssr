@@ -1,5 +1,5 @@
 {
-	"name": "@pulsarjs/runtime",
+	"name": "@pulsarjs/bun",
 	"type": "module",
 	"version": "0.0.1",
 	"description": "A lightweight SSR JSX meta-framework built on Hono",
@@ -73,9 +73,8 @@
 		"pulsar": "workspace:*"
 	},
 	"devDependencies": {
+		"@pulsarjs/runtime": "workspace:*",
 		"@types/node": "18.18.8",
-		"@types/set-cookie-parser": "2.4.6",
-		"hono": "3.10.0",
-		"set-cookie-parser": "2.6.0"
+		"hono": "3.10.2"
 	}
 }

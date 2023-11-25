@@ -1,4 +1,4 @@
-import { createHttpRequestHandler } from '@pulsarjs/runtime/adapters';
+import { createRequestHandler } from '@pulsarjs/node';
 import { transformPathToUrl } from 'pulsar/internal';
 import type { Plugin } from 'vite';
 import type { Options } from '../types';
@@ -84,9 +84,14 @@ export function pulsarDev({ routes, routesDir, entry }: Options): Plugin {
 				] as const;
 			});
 
-			const handle = createHttpRequestHandler({
+			const handle = createRequestHandler({
 				build: {
 					routes: Object.fromEntries(entries),
+					// This is ignored in dev, letting vite handle assets
+					assets: {
+						url: '',
+						files: [],
+					},
 				},
 			});
 

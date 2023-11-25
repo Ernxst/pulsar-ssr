@@ -13,6 +13,7 @@
 	},
 	"devDependencies": {
 		"@pulsarjs/vite-plugin-pulsar": "workspace:*",
+		"@pulsarjs/bun": "workspace:*",
 		"typescript": "5.2.2",
 		"vite": "4.5.0"
 	}

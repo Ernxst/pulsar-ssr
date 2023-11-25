@@ -74,6 +74,7 @@ export * from './matchers';
 export * from './types';
 
 export {
+	arrayExpression,
 	importDefaultSpecifier,
 	importDeclaration,
 	importSpecifier,

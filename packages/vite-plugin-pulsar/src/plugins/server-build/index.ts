@@ -1,5 +1,6 @@
+import { builtinModules } from 'module';
 import type { Adapter } from 'src/adapters';
-import type { Plugin } from 'vite';
+import type { Plugin, ResolvedConfig } from 'vite';
 import MagicString from 'magic-string';
 import type { Options } from '../types';
 import { createServerEntry } from './create-server-entry';
@@ -12,6 +13,10 @@ export function pulsarServerBuild({
 }: {
 	adapter: Adapter;
 } & Options): Plugin {
+	const external = adapter.type === 'node' ? builtinModules : [];
+
+	let resolved: ResolvedConfig;
+
 	/**
 	 * The idea is to transform the consumer entry into a server entry.
 	 * To do so, we return a virtual import, which we then transform
@@ -19,15 +24,19 @@ export function pulsarServerBuild({
 	 */
 	return {
 		name: 'pulsar-create-server-entry',
-		enforce: 'pre',
-		async config() {
+		enforce: 'post',
+		config() {
 			return {
 				build: {
 					rollupOptions: {
-						input: { 'server/entry': entry },
+						input: { entry },
+						external,
 					},
 				},
 			};
+		},
+		configResolved(config) {
+			resolved = config;
 		},
 		transform(_code, id) {
 			if (id === entry) {
@@ -36,7 +45,13 @@ export function pulsarServerBuild({
 					relative: input.split(routesDir)[1],
 				}));
 
-				const code = createServerEntry({ routes: config, adapter });
+				const assetsDir = resolved.build.assetsDir;
+				const code = createServerEntry({
+					routes: config,
+					adapter,
+					assetsDir,
+					assets: [],
+				});
 				const string = new MagicString(code);
 
 				return { code, map: string.generateMap({ hires: 'boundary' }) };

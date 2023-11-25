@@ -3,7 +3,6 @@ import { SmartRouter } from 'hono/router/smart-router';
 import { TrieRouter } from 'hono/router/trie-router';
 import { getFilePath } from 'hono/utils/filepath';
 import { renderToReadableStream } from 'hono/jsx/streaming';
-import { setActionData } from 'pulsar/internal';
 import { notFound } from 'src/utils/not-found';
 import {
 	PULSAR_FORM_ACTIONS_ENDPOINT,
@@ -92,12 +91,7 @@ export function createPulsarRouter(
 				throw new Error(`Unknown form action "${action}" for file ${file}`);
 
 			const actionData = await handler(context);
-			/**
-			 * We allow actions without a page in case other pages/routes want to
-			 * call these actions
-			 */
-			setActionData(action, actionData);
-
+			// TODO: How to set action data. We won't have context
 			return actionData;
 		},
 	});

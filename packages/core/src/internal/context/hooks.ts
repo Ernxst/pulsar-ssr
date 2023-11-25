@@ -21,7 +21,3 @@ export function useRoute(): types.RouteData {
 export function usePage(): types.PageData {
 	return getContextOrThrow(PageContext, 'page');
 }
-
-export function setActionData(key: string, actionData: any) {
-	usePage().actionData.set(key, actionData);
-}

@@ -6,7 +6,7 @@ import type { ServerBuild } from '@pulsarjs/runtime';
 import { createPulsarRouter, handleRequest } from '@pulsarjs/runtime';
 
 export type RequestHandler = (
-	request: Request,
+	request: FetchEvent,
 	env: Pulsar.Env,
 	context: ExecutionContext
 ) => Promise<Response>;
@@ -22,25 +22,25 @@ export function createRequestHandler({
 		handleAsset(request, build, options)
 	);
 
-	return async function handle(request, env) {
-		return handleRequest({ router, request, env });
+	return async function handle(event, env) {
+		return handleRequest({ router, request: event.request, env });
 	};
 }
 
 async function handleAsset(
-	request: Request,
+	event: FetchEvent,
 	build: ServerBuild,
 	options?: Partial<KvAssetHandlerOptions>
 ) {
 	if (process.env.NODE_ENV === 'development') {
-		return await getAssetFromKV(request, {
+		return await getAssetFromKV(event, {
 			cacheControl: { bypassCache: true },
 			...options,
 		});
 	}
 
 	let cacheControl = {};
-	const url = new URL(request.url);
+	const url = new URL(event.url);
 	const assetPath = build.assets.url.split('/').slice(0, -1).join('/');
 	const requestPath = url.pathname.split('/').slice(0, -1).join('/');
 
@@ -61,7 +61,7 @@ async function handleAsset(
 		};
 	}
 
-	return await getAssetFromKV(request, {
+	return await getAssetFromKV(event, {
 		cacheControl,
 		...options,
 	});

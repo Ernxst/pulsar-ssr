@@ -1,4 +1,5 @@
-import type { LoaderFunctionArgs } from 'src/loader/types';
+import { usePageContext } from 'src/hooks/context';
+import type { LoaderFunctionArgs } from 'src/loader';
 import type { QueryParams, UrlPath } from 'src/types';
 
 // eslint-disable-next-line @typescript-eslint/ban-types
@@ -41,3 +42,11 @@ export type inferActionOutput<
 >
 	? TData
 	: never;
+
+export function useActionData<
+	TActions extends Record<string, ActionFunction<any, any, any, any>>,
+>(
+	action: string & keyof TActions
+): Awaited<inferActionOutput<TActions[typeof action]>> {
+	return usePageContext().actionData.get(action);
+}

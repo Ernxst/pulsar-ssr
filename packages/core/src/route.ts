@@ -1,4 +1,4 @@
-import type { LoaderFunctionArgs } from 'src/loader/types';
+import type { LoaderFunctionArgs } from 'src/loader';
 import type { QueryParams, UrlPath } from 'src/types';
 
 export interface RouteFunctionArgs<

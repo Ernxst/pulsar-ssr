@@ -1,6 +1,5 @@
 import { createRequestHandler } from '@pulsarjs/node';
-import type { PulsarModule } from '@pulsarjs/runtime';
-import { transformPathToUrl } from 'pulsar/internal';
+import { type PulsarModule, transformPathToUrl } from '@pulsarjs/runtime';
 import type { Connect, ResolvedConfig } from 'vite';
 
 interface Options {

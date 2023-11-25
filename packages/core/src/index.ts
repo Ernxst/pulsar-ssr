@@ -4,7 +4,7 @@ export type {
 	CacheOptions,
 	CookieHandler,
 	PulsarCookieOptions,
-} from 'src/loader/types';
+} from 'src/loader.ts';
 
 export type { Runtime } from 'hono/adapter';
 

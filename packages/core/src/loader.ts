@@ -1,3 +1,4 @@
+import { usePageContext } from 'src/hooks/context';
 import type { CookieOptions } from 'hono/utils/cookie';
 import type { cacheHeader } from 'pretty-cache-header';
 import type { QueryParams, UrlPath, inferPathParams } from 'src/types';
@@ -108,3 +109,9 @@ export type LoaderFunction<
 
 export type inferLoaderData<TLoader extends LoaderFunction<any, any, any>> =
 	Awaited<ReturnType<TLoader>>;
+
+export function useLoaderData<
+	TLoader extends LoaderFunction<any, any, any>,
+>(): inferLoaderData<TLoader> {
+	return usePageContext().loaderData.value;
+}

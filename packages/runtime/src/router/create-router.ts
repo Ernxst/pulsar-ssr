@@ -3,12 +3,12 @@ import { SmartRouter } from 'hono/router/smart-router';
 import { TrieRouter } from 'hono/router/trie-router';
 import { getFilePath } from 'hono/utils/filepath';
 import { renderToReadableStream } from 'hono/jsx/streaming';
+import { setActionData } from 'pulsar/internal';
+import { notFound } from 'src/utils/not-found';
 import {
 	PULSAR_FORM_ACTIONS_ENDPOINT,
 	PULSAR_FORM_ACTIONS_METHOD,
-	setActionData,
-} from 'pulsar/internal';
-import { notFound } from 'src/utils/not-found';
+} from 'src/utils/url/create-action-url';
 import type {
 	AssetHandler,
 	HTTPMethod,

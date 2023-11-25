@@ -1,6 +1,7 @@
 import path from 'node:path';
-import { LAYOUT_PATTERN, transformPathToUrl } from 'pulsar/internal';
+import { LAYOUT_PATTERN } from 'pulsar/internal';
 import glob from 'tiny-glob/sync';
+import { transformPathToUrl } from '@pulsarjs/runtime';
 import type { Options } from '..';
 
 const NAMESPACE_LAYOUT_REGEX = /(?<prefix>.*?)\.layout\./;

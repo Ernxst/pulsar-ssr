@@ -1,7 +1,7 @@
 import type { ReloadMessage } from 'pulsar/internal';
-import { transformPathToUrl } from 'pulsar/internal';
 import { matchesLayout, matchesRoute } from 'src/utils/matches';
 import type { ViteDevServer } from 'vite';
+import { transformPathToUrl } from '@pulsarjs/runtime';
 import { getLayoutsForPage } from '../transform/transformers/layouts/utils/get-layouts-for-page';
 import { getCurrentPath, isDependencyOf } from './utils';
 

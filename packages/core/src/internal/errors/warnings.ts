@@ -1,4 +1,3 @@
-import { PULSAR_FORM_ACTIONS_METHOD } from '../utils/url/create-action-url';
 import type { ErrorOrWarning } from './types';
 import { createWarning } from './utils';
 
@@ -94,7 +93,7 @@ export function FormactionAndUnsupportedMethodWarning({
 		...opts,
 		errorCode: 'FORM_ACTION_AND_UNSUPPORTED_METHOD',
 		message: `Cannot use method="${method}" when using a form action.`,
-		description: `A form in "${filePath}" uses both formaction="${formaction}" and method="${method}" which is not allowed; The method "${method}" will be replaced with ${PULSAR_FORM_ACTIONS_METHOD}.`,
+		description: `A form in "${filePath}" uses both formaction="${formaction}" and method="${method}" which is not allowed; The method "${method}" will be replaced with POST.`,
 		docsLink: '/todo',
 	});
 }

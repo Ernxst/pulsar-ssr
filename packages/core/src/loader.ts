@@ -34,7 +34,12 @@ export interface LoaderFunctionArgs<
 	TQuery extends QueryParams = QueryParams,
 > {
 	/**
-	 * The runtime the request is running on. This is set by the adapter used.
+	 * The runtime the request is running on. This is set depending on the
+	 * environment the server is currently running on. Therefore, this will
+	 * always be `node` during development and during preview.
+	 *
+	 * To set this correctly, consult the adapter-specific documentation
+	 * on how to run the server on the given platform.
 	 */
 	readonly runtime: Runtime;
 	/**

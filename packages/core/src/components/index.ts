@@ -1,7 +1,10 @@
 export { Fragment, createContext, memo, useContext } from 'hono/jsx';
 export { Suspense } from 'hono/jsx/streaming';
 export { LiveReload } from './LiveReload';
-export { ScrollRestoration, type ScrollRestorationProps } from "./ScrollRestoration"
+export {
+	ScrollRestoration,
+	type ScrollRestorationProps,
+} from './ScrollRestoration';
 
 /**
  * We export these from here, rather than the JSX entry because they import

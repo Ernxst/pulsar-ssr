@@ -1,24 +1,17 @@
 import { createHttpRequestHandler } from '@pulsarjs/runtime/adapters';
-import { matches } from 'src/utils/matches';
-import type { Plugin, ViteDevServer } from 'vite';
 import { transformPathToUrl } from 'pulsar/internal';
-import type { Options } from './types';
+import type { Plugin } from 'vite';
+import type { Options } from '../types';
+import { createHandler } from './handler';
 
 const PULSAR_DEV_PROTOCOL = 'ws:';
 const PULSAR_DEV_PORT = 8002;
-
-function sendReload(vite: ViteDevServer, file: string, routesDir: string) {
-	const relative = file.split(routesDir)[1];
-	const endpoint = transformPathToUrl(relative);
-	// @ts-expect-error it's fine
-	vite.ws.send({ type: 'RELOAD', path: file, endpoint });
-}
 
 /**
  * Dev server which uses the node:http adapter, like it would do in a build
  * to serve the pages/routes
  */
-export function pulsarDev({ routes, routesDir }: Options): Plugin {
+export function pulsarDev({ routes, routesDir, entry }: Options): Plugin {
 	return {
 		name: 'pulsar-dev-server',
 		config() {
@@ -39,26 +32,43 @@ export function pulsarDev({ routes, routesDir }: Options): Plugin {
 			};
 		},
 		async configureServer(vite) {
-			// TODO: Reload on CSS changes/deletes/adds
-			vite.watcher.on('change', (file) => {
-				if (matches(file, routesDir)) {
-					sendReload(vite, file, routesDir);
+			const handler = createHandler({
+				vite,
+				serverEntry: entry,
+				routesDir,
+				routes,
+			});
+
+			vite.watcher.on('change', (id) => {
+				if (
+					handler.is.page(id) ||
+					handler.is.asset.andDependencyOf.root(id) ||
+					handler.is.asset.andDependencyOf.page(id) ||
+					handler.is.asset.andDependencyOf.layout(id)
+				) {
+					return handler.send.reload(id, { force: true });
 				}
 			});
 
-			vite.watcher.on('add', async (file) => {
-				if (matches(file, routesDir)) {
-					await vite.restart();
-					console.info(`Route ${file} added - restarting server`);
-					sendReload(vite, file, routesDir);
+			vite.watcher.on('add', (id) => {
+				// Do nothing when assets are added
+				if (
+					handler.is.page(id) ||
+					handler.is.entry(id) ||
+					handler.is.layout(id)
+				) {
+					return handler.send.restart(id);
 				}
 			});
 
-			vite.watcher.on('unlink', async (file) => {
-				if (matches(file, routesDir)) {
-					await vite.restart();
-					console.info(`Route ${file} deleted - restarting server`);
-					sendReload(vite, file, routesDir);
+			vite.watcher.on('unlink', (id) => {
+				// Do nothing when assets are removed
+				if (
+					handler.is.page(id) ||
+					handler.is.entry(id) ||
+					handler.is.layout(id)
+				) {
+					return handler.send.restart(id);
 				}
 			});
 
@@ -83,12 +93,11 @@ export function pulsarDev({ routes, routesDir }: Options): Plugin {
 			return () => {
 				vite.middlewares.use(async (req, res, next) => {
 					try {
-						const base = vite.resolvedUrls?.local[0];
-						if (!base) {
-							throw new Error('Could not get base URL');
-						}
+						const protocol = vite.config.server.https ? 'https' : 'http';
+						const host = req.headers[':authority'] ?? req.headers.host;
+						const base = `${protocol}://${host}`;
 
-						const fullUrl = new URL(req.originalUrl ?? '', base).toString();
+						const fullUrl = base + req.originalUrl;
 						req.originalUrl = fullUrl;
 						req.url = fullUrl;
 

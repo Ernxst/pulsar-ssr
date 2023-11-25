@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { LAYOUT_PATTERN, ROUTE_PATTERN } from 'pulsar/internal';
 import { pulsarConfig } from 'src/plugins/config';
-import { pulsarDev } from 'src/plugins/dev-server';
+import { pulsarDev } from 'src/plugins/dev';
 import { pulsarServerBuild } from 'src/plugins/server-build';
 import { pulsarTransform } from 'src/plugins/transform';
 import glob from 'tiny-glob/sync';

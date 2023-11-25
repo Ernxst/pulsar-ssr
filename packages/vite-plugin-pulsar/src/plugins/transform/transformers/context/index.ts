@@ -6,20 +6,22 @@ import { addImport } from '../layouts/utils/add-layout-imports';
 import { removeDefaultExportKeyword } from '../layouts/utils/remove-default-export';
 
 const EXPORTED_PAGE_QUERY = 'ExportDefaultDeclaration';
+const IDENTIFIER = '$pulsar';
 
 export const PulsarContext: PulsarTransformer = {
-	validate() { },
+	validate() {},
 	transform({ ast, code, string, id, routesDir }) {
-		const isPage = matchesRoute(id, routesDir)
-		const [page] = parser.match<parser.ExportDefaultDeclaration>(
-			ast,
-			EXPORTED_PAGE_QUERY
-		);
+		if (matchesRoute(id, routesDir)) {
+			const [page] = parser.match<parser.ExportDefaultDeclaration>(
+				ast,
+				EXPORTED_PAGE_QUERY
+			);
 
-		if (page && isPage) {
-			addContextImports(ast, string);
-			removeDefaultExportKeyword(ast, code, string);
-			wrapInContext({ ast, string, page });
+			if (page) {
+				addContextImports(ast, string);
+				removeDefaultExportKeyword(ast, code, string);
+				wrapInContext({ ast, string, page });
+			}
 		}
 
 		return ast;
@@ -29,18 +31,7 @@ export const PulsarContext: PulsarTransformer = {
 function addContextImports(ast: parser.Program, string: MagicString) {
 	const node = parser.importDeclaration(
 		[
-			parser.importSpecifier(
-				parser.identifier('Page'),
-				parser.identifier('Page')
-			),
-			parser.importSpecifier(
-				parser.identifier('Route'),
-				parser.identifier('Route')
-			),
-			parser.importSpecifier(
-				parser.identifier('Url'),
-				parser.identifier('Url')
-			),
+				parser.importNamespaceSpecifier(parser.identifier(IDENTIFIER)),
 		],
 		parser.stringLiteral('pulsar/internal')
 	);
@@ -56,6 +47,10 @@ function indent(text: string, tabs: number) {
 		.join('\n');
 }
 
+function namespaced(value: string) {
+	return `${IDENTIFIER}.${value}`;
+}
+
 function wrapInContext({
 	ast,
 	string,
@@ -66,27 +61,27 @@ function wrapInContext({
 	page: parser.ExportDefaultDeclaration;
 }) {
 	const [{ name }] = parser.match<parser.Identifier>(page, 'Identifier');
-	const raw = [];
-	const componentJsx = `<${name}>{children}</${name}>`;
+	const lines = [];
 
-	raw.push(
-		`export default function Page_${name}({ children, context, loaderData }) {`
-	);
-	raw.push(indent(`console.log({ context, loaderData })`, 1));
-	raw.push(indent(`return (`, 1));
-	raw.push(indent('<Route.Provider value={context}>', 2));
-	raw.push(indent('<Url.Provider>', 3));
-	raw.push(indent('<Page.Provider value={loaderData}>', 4));
-	raw.push(indent(componentJsx, 5));
-	raw.push(indent('</Page.Provider>', 4));
-	raw.push(indent('</Url.Provider>', 3));
-	raw.push(indent('</Route.Provider>', 2));
-	raw.push(indent(')', 1));
-	raw.push('}');
+	const routeProvider = namespaced('Route.Provider');
+	const urlProvider = namespaced('Url.Provider');
+	const pageProvider = namespaced('Page.Provider');
 
-	const code = raw.join('\n');
+	lines.push(`export default function Page_${name}(props) {`);
+	lines.push(indent(`return (`, 1));
+	lines.push(indent(`<${routeProvider} value={props.context}>`, 2));
+	lines.push(indent(`<${urlProvider}>`, 3));
+	lines.push(indent(`<${pageProvider} value={props.loaderData}>`, 4));
+	lines.push(indent(`<${name}>{props.children}</${name}>`, 5));
+	lines.push(indent(`</${pageProvider}>`, 4));
+	lines.push(indent(`</${urlProvider}>`, 3));
+	lines.push(indent(`</${routeProvider}>`, 2));
+	lines.push(indent(`)`, 1));
+	lines.push('}');
+
+	const code = lines.join('\n');
+	const { body } = parser.parse(code);
 
 	string.append(`\n\n${code}`);
-	const { body } = parser.parse(code);
 	ast.body.push(...body);
 }

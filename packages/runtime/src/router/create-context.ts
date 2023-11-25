@@ -8,7 +8,12 @@ import {
 	serializeSigned,
 } from 'hono/utils/cookie';
 import { cacheHeader } from 'pretty-cache-header';
-import type { CookieHandler, QueryParams, UrlPath, inferPathParams } from 'pulsar';
+import type {
+	CookieHandler,
+	QueryParams,
+	UrlPath,
+	inferPathParams,
+} from 'pulsar';
 import type { RouteFunctionArgs } from 'pulsar/route';
 
 interface Options {

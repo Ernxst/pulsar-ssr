@@ -1,4 +1,5 @@
 import type { IncomingMessage, ServerResponse } from 'node:http';
+import fs from "node:fs";
 import { env, getRuntimeKey } from 'hono/adapter';
 import {
 	type ServerBuild,
@@ -19,7 +20,7 @@ export function createRequestHandler({
 }: {
 	build: ServerBuild;
 }): RequestHandler {
-	const handleAsset = createAssetHandler(Bun.file);
+	const handleAsset = createAssetHandler(fs.readFileSync);
 	const router = createPulsarRouter(build, handleAsset);
 	const runtime = getRuntimeKey();
 

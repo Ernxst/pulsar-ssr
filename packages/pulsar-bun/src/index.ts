@@ -1,3 +1,4 @@
+import fs from "node:fs";
 import { env, getRuntimeKey } from 'hono/adapter';
 import {
 	type AssetHandler,
@@ -15,7 +16,8 @@ export function createRequestHandler({
 	build: ServerBuild;
 	getAsset: AssetHandler;
 }): RequestHandler {
-	const handleAsset = createAssetHandler(Bun.file);
+	const readFile = process.env.NODE_ENV === 'development' ? fs.readFileSync : Bun.file;
+	const handleAsset = createAssetHandler(readFile);
 	const router = createPulsarRouter(build, handleAsset);
 	const runtime = getRuntimeKey();
 

@@ -1,7 +1,7 @@
 import * as parser from '@pulsarjs/parser';
 import type { Adapter } from './types';
 
-export function bun({ port = 5174 }: { port?: number } = {}): Adapter {
+export function bun({ port = 4173 }: { port?: number } = {}): Adapter {
 	return {
 		name: 'pulsar-bun',
 		package: '@pulsarjs/bun',

@@ -1,3 +1,4 @@
+import * as parser from '@pulsarjs/parser';
 import type { Adapter } from './types';
 
 export function cloudflare(): Adapter {
@@ -5,9 +6,11 @@ export function cloudflare(): Adapter {
 		name: 'pulsar-cloudflare-workers',
 		adapterFunction: 'createCloudflareWorker',
 		createServer({ handler }) {
-			return `export default {
-				fetch: ${handler}
-			}`;
+			return parser.exportDefaultDeclaration(
+				parser.objectExpression([
+					parser.objectProperty(parser.stringLiteral('fetch'), handler as any),
+				])
+			) as parser.Node;
 		},
 	};
 }

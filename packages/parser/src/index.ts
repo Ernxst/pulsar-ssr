@@ -55,6 +55,11 @@ const generator = {
 		const { code } = gen(node, {});
 		state.write(code, node as any);
 	},
+
+	ObjectProperty(node: babel.ObjectProperty, state: State) {
+		const { code } = gen(node, {});
+		state.write(code, node as any);
+	},
 };
 
 export function generate(ast: acorn.Node | acorn.Program) {
@@ -72,12 +77,17 @@ export {
 	importDefaultSpecifier,
 	importDeclaration,
 	importSpecifier,
+	importNamespaceSpecifier,
+	arrowFunctionExpression,
 	identifier,
 	stringLiteral,
 	jsxAttribute,
 	jsxIdentifier,
 	jsxFragment,
 	assignmentExpression,
+	objectExpression,
+	objectProperty,
+	numericLiteral,
 	blockStatement,
 	returnStatement,
 	variableDeclaration,

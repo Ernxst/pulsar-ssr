@@ -1,5 +1,6 @@
 import { transformPathToUrl } from 'pulsar/internal';
 import type { Adapter } from 'src/adapters/types';
+import * as parser from '@pulsarjs/parser';
 
 interface Options {
 	adapter: Adapter;
@@ -7,7 +8,6 @@ interface Options {
 }
 
 export function createServerEntry({ routes, adapter }: Options): string {
-	const buildIdentifier = 'build';
 	const routeIds = routes.map(({ input, relative }, idx) => ({
 		importUrl: input,
 		pathname: relative,
@@ -15,31 +15,62 @@ export function createServerEntry({ routes, adapter }: Options): string {
 		endpoint: transformPathToUrl(relative),
 	}));
 
-	return `
-	import { ${adapter.adapterFunction} } from "@pulsarjs/runtime/adapters";
-	${routeIds
-		.map(
-			// Star import so all exported functions are included in module
-			({ importUrl, identifier }) =>
-				`import * as ${identifier} from "${importUrl}";`
+	const adapterIdentifier = parser.identifier(adapter.adapterFunction);
+	const importNode = parser.importDeclaration(
+		[parser.importSpecifier(adapterIdentifier, adapterIdentifier)],
+		parser.stringLiteral('@pulsarjs/runtime/adapters')
+	);
+
+	const routeImports = routeIds.map(({ importUrl, identifier }) =>
+		parser.importDeclaration(
+			[parser.importNamespaceSpecifier(parser.identifier(identifier))],
+			parser.stringLiteral(importUrl)
 		)
-		.join('\n')}
+	);
 
-	const ${buildIdentifier} = {
-		routes: {
-			${routeIds
-				.map(
-					({ pathname, identifier, endpoint }) => `"${pathname}": {
-						endpoint: "${endpoint}",
-						loadModule:	() => ${identifier},
-					},`
-				)
-				.join('\n')}
-		}
-	}
+	const buildIdentifier = parser.identifier('build');
+	const buildNode = parser.variableDeclaration('const', [
+		parser.variableDeclarator(
+			buildIdentifier,
+			parser.objectExpression([
+				parser.objectProperty(
+					parser.identifier('routes'),
+					parser.objectExpression(
+						routeIds.map(({ pathname, identifier, endpoint }) => {
+							const keyNode = parser.stringLiteral(pathname);
+							const valueNode = parser.objectExpression([
+								parser.objectProperty(
+									parser.stringLiteral('endpoint'),
+									parser.stringLiteral(endpoint)
+								),
+								parser.objectProperty(
+									parser.stringLiteral('loadModule'),
+									parser.arrowFunctionExpression(
+										[],
+										parser.identifier(identifier)
+									)
+								),
+							]);
 
-${adapter.createServer({
-	handler: `${adapter.adapterFunction}({ build: ${buildIdentifier} })`,
-})}
-	`;
+							return parser.objectProperty(keyNode, valueNode);
+						})
+					)
+				),
+			])
+		),
+	]);
+
+	const callExpr = parser.callExpression(adapterIdentifier, [
+		parser.objectExpression([
+			parser.objectProperty(parser.stringLiteral('build'), buildIdentifier),
+		]),
+	]) as parser.CallExpression;
+
+	const serverNode = adapter.createServer({ handler: callExpr });
+
+	const ast = parser.parse('');
+	// @ts-expect-error it's fine
+	ast.body.push(importNode, ...routeImports, buildNode, serverNode);
+
+	return parser.generate(ast);
 }

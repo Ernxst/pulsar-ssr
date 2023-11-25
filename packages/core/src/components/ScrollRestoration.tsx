@@ -1,5 +1,6 @@
 /// <reference lib="dom" />
 import { useLocation } from 'src';
+import 'src/jsx';
 
 const STORAGE_KEY = 'positions';
 
